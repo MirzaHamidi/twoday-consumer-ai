@@ -2,7 +2,7 @@
   const root = document.querySelector('[data-consumer-ai]');
   if (!root) return;
 
-const endpoint = window.TWODAY_AI_ENDPOINT || 'https://mc-wvgsibkmje.bunny.run/api/ai/chat';
+const endpoint = window.TWODAY_AI_ENDPOINT || 'https://ai.twodaystudio.com/api/ai/chat';
   const launcher = root.querySelector('[data-ai-toggle]');
   const panel = root.querySelector('#consumer-ai-panel');
   const form = root.querySelector('[data-ai-form]');
@@ -13,11 +13,19 @@ const endpoint = window.TWODAY_AI_ENDPOINT || 'https://mc-wvgsibkmje.bunny.run/a
   let history = [];
 
   const copy = {
-    en: { eyebrow: 'Twoday Studio', title: 'Studio AI', welcome: 'Ask about our games, studio, or publishing.', inputLabel: 'Message', placeholder: 'Ask Twoday Studio AI...', search: 'Web search', send: 'Send', thinking: 'Thinking…', error: 'The AI is unavailable right now. Please try again.' },
-    tr: { eyebrow: 'Twoday Studio', title: 'Studio AI', welcome: 'Oyunlarımızı, stüdyomuzu veya yayıncılığı sorabilirsiniz.', inputLabel: 'Mesaj', placeholder: 'Twoday Studio AI’a sorun...', search: 'Web araması', send: 'Gönder', thinking: 'Düşünüyor…', error: 'AI şu anda kullanılamıyor. Lütfen tekrar deneyin.' },
-    ar: { eyebrow: 'Twoday Studio', title: 'استوديو AI', welcome: 'اسأل عن ألعابنا أو الاستوديو أو النشر.', inputLabel: 'الرسالة', placeholder: 'اسأل Twoday Studio AI...', search: 'بحث على الويب', send: 'إرسال', thinking: 'يفكر…', error: 'الذكاء الاصطناعي غير متاح الآن. حاول مرة أخرى.' },
-    zh: { eyebrow: 'Twoday Studio', title: '工作室 AI', welcome: '可以询问我们的游戏、工作室或发行合作。', inputLabel: '消息', placeholder: '向 Twoday Studio AI 提问…', search: '网页搜索', send: '发送', thinking: '思考中…', error: 'AI 暂时不可用，请稍后再试。' }
+    en: { eyebrow: 'Twoday Studio', title: 'ToDo Assistant', welcome: 'Ask about our games, studio, or publishing.', inputLabel: 'Message', placeholder: 'Ask ToDo Assistant...', search: 'Web search', send: 'Send', thinking: 'Thinking…', error: 'The AI is unavailable right now. Please try again.' },
+    tr: { eyebrow: 'Twoday Studio', title: 'ToDo Assistant', welcome: 'Oyunlarımızı, stüdyomuzu veya yayıncılığı sorabilirsiniz.', inputLabel: 'Mesaj', placeholder: 'ToDo Assistant’a sorun...', search: 'Web araması', send: 'Gönder', thinking: 'Düşünüyor…', error: 'AI şu anda kullanılamıyor. Lütfen tekrar deneyin.' },
+    ar: { eyebrow: 'Twoday Studio', title: 'مساعد ToDo', welcome: 'اسأل عن ألعابنا أو الاستوديو أو النشر.', inputLabel: 'الرسالة', placeholder: 'اسأل مساعد ToDo...', search: 'بحث على الويب', send: 'إرسال', thinking: 'يفكر…', error: 'الذكاء الاصطناعي غير متاح الآن. حاول مرة أخرى.' },
+    zh: { eyebrow: 'Twoday Studio', title: 'ToDo 助手', welcome: '可以询问我们的游戏、工作室或发行合作。', inputLabel: '消息', placeholder: '向 ToDo 助手提问…', search: '网页搜索', send: '发送', thinking: '思考中…', error: 'AI 暂时不可用，请稍后再试。' }
   };
+
+  function detectLanguage(text) {
+    const value = String(text || '');
+    if (/[؀-ۿ]/u.test(value)) return 'ar';
+    if (/[぀-ヿ㐀-鿿]/u.test(value)) return 'zh';
+    if (/[çğıİöşüÇĞIÖŞÜ]/u.test(value)) return 'tr';
+    return language();
+  }
 
   function language() { return localStorage.getItem('twoday-lang') || document.documentElement.lang || 'en'; }
   function setCopy() {
@@ -27,13 +35,13 @@ const endpoint = window.TWODAY_AI_ENDPOINT || 'https://mc-wvgsibkmje.bunny.run/a
     input.placeholder = t.placeholder;
     input.setAttribute('aria-label', t.inputLabel);
   }
-  function toggle(open) { panel.hidden = !open; launcher.setAttribute('aria-expanded', String(open)); if (open) input.focus(); }
+  function toggle(open) { panel.hidden = !open; panel.setAttribute('aria-hidden', String(!open)); launcher.setAttribute('aria-expanded', String(open)); if (open) input.focus(); }
   function addMessage(text, role) { const item = document.createElement('p'); item.className = `consumer-ai-message is-${role}`; item.textContent = text; messages.appendChild(item); messages.scrollTop = messages.scrollHeight; return item; }
   function setBusy(busy) { form.querySelector('[type="submit"]').disabled = busy; input.disabled = busy; }
 
   launcher.addEventListener('click', () => toggle(panel.hidden));
   root.querySelector('.consumer-ai-close').addEventListener('click', () => toggle(false));
-  searchButton.addEventListener('click', () => { webSearch = !webSearch; searchButton.setAttribute('aria-pressed', String(webSearch)); searchButton.classList.toggle('is-active', webSearch); });
+  searchButton.addEventListener('click', () => { webSearch = !webSearch; searchButton.setAttribute('aria-pressed', String(webSearch)); searchButton.dataset.enabled = String(webSearch); searchButton.classList.toggle('is-active', webSearch); });
   document.querySelector('#lang-select')?.addEventListener('change', setCopy);
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -50,7 +58,7 @@ const endpoint = window.TWODAY_AI_ENDPOINT || 'https://mc-wvgsibkmje.bunny.run/a
     addMessage(text, 'user'); input.value = ''; setBusy(true);
     const thinking = addMessage(t.thinking, 'assistant');
     try {
-      const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, history, language: language(), webSearch }) });
+      const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, history, language: detectLanguage(text), webSearch }) });
       const data = await response.json();
       if (!response.ok || !data.answer) throw new Error(data.error || 'AI request failed');
       thinking.textContent = data.answer;

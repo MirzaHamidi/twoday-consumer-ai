@@ -397,13 +397,15 @@
       </div>
     </footer>
 
-    <aside class="consumer-ai" data-consumer-ai aria-label="Twoday Studio AI">
-      <button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open Twoday Studio AI">✦</button>
+    <aside class="consumer-ai" data-consumer-ai aria-label="ToDo Assistant">
+      <button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open ToDo Assistant">
+        <img src="assets/mascotwht.png" alt="Toto, ToDo Assistant" />
+      </button>
       <section class="consumer-ai-panel" id="consumer-ai-panel" hidden>
         <header class="consumer-ai-header">
           <div>
             <p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p>
-            <h2 data-ai-label="title">Studio AI</h2>
+            <h2 data-ai-label="title">ToDo Assistant</h2>
           </div>
           <button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button>
         </header>
@@ -412,9 +414,9 @@
         </div>
         <form class="consumer-ai-form" data-ai-form>
           <label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label>
-          <textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask Twoday Studio AI..."></textarea>
+          <textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask ToDo Assistant..."></textarea>
           <div class="consumer-ai-actions">
-            <button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Allow web search">⌕ <span data-ai-label="search">Web search</span></button>
+            <button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Toggle web search">⌕ <span data-ai-label="search">Web search</span></button>
             <button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button>
           </div>
         </form>
