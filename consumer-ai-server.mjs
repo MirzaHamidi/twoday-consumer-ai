@@ -30,12 +30,12 @@ async function handleAi(request, response, cors) {
     const requestUpstream = (selectedModel) => fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, 'Content-Type': 'application/json', 'X-Title': 'TwoDay Studio consumer AI' }, body: JSON.stringify({ model: selectedModel, messages: [{ role: 'system', content: system }, ...history, { role: 'user', content: message }], ...(body.webSearch ? { tools: [{ type: 'openrouter:web_search', parameters: { max_results: 5 } }], tool_choice: 'required' } : {}), reasoning: { effort: 'none', exclude: true }, include_reasoning: false, max_tokens: 900, temperature: 0.35 }) });
     let upstream = await requestUpstream(model);
     let payload = await upstream.json();
-    if (!upstream.ok) return finish(response, 502, JSON.stringify({ error: 'AI provider request failed.' }), { ...cors, 'Content-Type': 'application/json' });
+    if (!upstream.ok) return finish(response, upstream.status === 429 ? 429 : 502, JSON.stringify({ error: upstream.status === 429 ? 'The free model provider is temporarily rate-limited. Please try again after its reset window.' : 'AI provider request failed.' }), { ...cors, 'Content-Type': 'application/json', ...(upstream.status === 429 ? { 'Retry-After': '60' } : {}) });
     let answer = payload.choices?.[0]?.message?.content;
     if (typeof answer === 'string' && /^(?:user safety:\s*safe\s*response safety:\s*safe|i can't perform live web searches|i (?:don't|cannot|can't) (?:provide|perform|access) (?:real-time|live).*)/i.test(answer.trim()) && model === 'openrouter/free') {
       upstream = await requestUpstream(fallbackModel);
       payload = await upstream.json();
-      if (!upstream.ok) return finish(response, 502, JSON.stringify({ error: 'AI fallback request failed.' }), { ...cors, 'Content-Type': 'application/json' });
+      if (!upstream.ok) return finish(response, upstream.status === 429 ? 429 : 502, JSON.stringify({ error: upstream.status === 429 ? 'Free model providers are temporarily rate-limited. Please try again after the reset window.' : 'AI fallback request failed.' }), { ...cors, 'Content-Type': 'application/json' });
       answer = payload.choices?.[0]?.message?.content;
     }
     if (typeof answer !== 'string' || !answer.trim()) return finish(response, 502, JSON.stringify({ error: 'AI returned no answer.' }), { ...cors, 'Content-Type': 'application/json' });
