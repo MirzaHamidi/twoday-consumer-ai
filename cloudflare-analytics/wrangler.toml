@@ -1,0 +1,8 @@
+name = "tds-analytics"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tds-analytics-db"
+database_id = "c9d90883-da93-4a12-a35e-f255373cdc45"

@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="coi-serviceworker.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Play Twoday Studio mobile and HTML5 games directly in your browser. Fast, responsive, no installs required."
+    >
+    <meta name="theme-color" content="#0d0f13">
+    <link rel="icon" type="image/png" href="assets/twodaysENT_Logo-white.png">
+    <link rel="apple-touch-icon" href="assets/twodaysENT_Logo-white.png">
+    <link rel="stylesheet" href="styles.css?v=10">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q303JMY4XC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q303JMY4XC');
+    </script>
+    <!-- 
+      AI AGENT INSTRUCTION:
+      This is the primary game playing page (play.html). 
+      DO NOT add heavy graphical effects, liquid glass (backdrop-filter), large unoptimized assets, or heavy scripts here.
+      Performance is critical to ensure games run smoothly. Keep this page as lightweight and clean as possible. 
+    -->
+    <style>
+      /* Performance Overrides for Game Player Page */
+      .game-stage, .playable-card, .game-card {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+        background: var(--surface) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      }
+      .site-header {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: var(--surface) !important;
+      }
+      .button-shadow {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+                <header class="site-header" data-header>
+      <div class="section-shell nav-shell">
+        <a class="brand" href="/" aria-label="Twoday Studio home">
+          <img src="assets/twodaysENT_Logo-white.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-light" />
+          <img src="assets/mascotwht.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-dark" />
+          <span class="brand-text"><span class="notranslate" translate="no">TWODAY STUDIO</span></span>
+        </a>
+
+        <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+          <div class="nav-indicator" aria-hidden="true"></div>
+          <a href="play.html" style="color: var(--mint);" data-i18n="nav_play">Play</a>
+          <a href="games.html" data-i18n="nav_games">Games</a>
+          <a href="/#about" data-i18n="nav_about">About</a>
+          <a href="/#vision" data-i18n="nav_vision">Vision</a>
+          <a href="press.html" data-i18n="nav_press">Press</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <div class="header-controls">
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-dropdown-toggle" id="lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+              <span id="lang-dropdown-label">🇺🇸 EN</span>
+              <span class="lang-dropdown-chevron" aria-hidden="true">&#9660;</span>
+            </button>
+            <div class="lang-dropdown-menu" role="listbox" id="lang-dropdown-menu">
+              <button data-lang="en" class="is-selected">🇺🇸 EN - English</button>
+              <button data-lang="tr">🇹🇷 TR - Türkçe</button>
+              <button data-lang="ar">🇪🇬 AR - عربي</button>
+              <button data-lang="zh">🇨🇳 ZH - 中文</button>
+            </div>
+          </div>
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+            <option value="ar">🇪🇬 AR</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+            <span>🌓</span>
+          </button>
+          
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Interactive Game Player Stage -->
+      <section class="section arcade-section" aria-labelledby="player-heading">
+        <div class="section-shell game-stage-shell">
+          <div class="game-stage" data-game-player>
+            <div class="game-stage-topbar">
+              <div class="game-stage-info">
+                <div class="game-stage-icon">
+                  <img
+                    src="assets/dice-clicker-idle-icon.png"
+                    alt="Current game icon"
+                    data-current-game-icon
+                  >
+                </div>
+                <div class="game-stage-title-group">
+                  <h2 id="player-heading" data-current-game-title><span class="notranslate" translate="no">Twoday Studio</span> Game Player</h2>
+                  <span class="game-stage-badge" data-current-game-genre>HTML5 Instant Play</span>
+                </div>
+              </div>
+
+              <div class="game-stage-controls">
+                <button
+                  class="stage-btn"
+                  type="button"
+                  data-game-reload
+                  title="Reload current game"
+                  aria-label="Reload game"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+                  </svg>
+                  <span>Reload</span>
+                </button>
+                <button
+                  class="stage-btn"
+                  type="button"
+                  data-game-fullscreen
+                  title="Toggle Fullscreen"
+                  aria-label="Fullscreen"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                  </svg>
+                  <span>Fullscreen</span>
+                </button>
+                <a
+                  class="stage-btn"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-game-newtab
+                  title="Open game in a separate browser tab"
+                  style="pointer-events: none; opacity: 0.5;"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+                  </svg>
+                  <span>New Tab</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Viewport Container -->
+            <div class="game-viewport-container aspect-16-9" id="game-viewport" data-game-viewport>
+              <iframe
+                class="game-iframe"
+                data-game-iframe
+                src="about:blank"
+                title="Twoday Game Player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen; cross-origin-isolated"
+                allowfullscreen
+              ></iframe>
+
+              <div class="game-viewport-placeholder" data-game-placeholder>
+                <div>
+                  <h3 style="margin-bottom: 0;">Ready to Play</h3>
+                </div>
+                <div class="button-row" style="justify-content: center;">
+                  <div class="button-wrap">
+                    <button
+                      class="button button-primary"
+                      type="button"
+                      data-load-game
+                      data-game-src="Games/OneTwoDice/index.html"
+                      data-game-title="One Two Dice"
+                      data-game-genre="Idle Clicker"
+                      data-game-icon="assets/dice-clicker-idle-icon.png"
+                      data-game-aspect="16-9"
+                    >
+                      <span>Play One Two Dice</span>
+                    </button>
+                    <div class="button-shadow"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-stage-footer">
+              <div>
+                <span>Viewport Ratio:</span>
+                <span class="game-aspect-toggle">
+                  <button class="aspect-btn is-active" type="button" data-aspect="16-9">16:9 Landscape</button>
+                  <button class="aspect-btn" type="button" data-aspect="4-3">4:3 Standard</button>
+                  <button class="aspect-btn" type="button" data-aspect="9-16">9:16 Mobile Portrait</button>
+                </span>
+              </div>
+              <p style="margin: 0;">Use keyboard / mouse or touchscreen controls.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Playable Games Library -->
+      <section class="section" aria-labelledby="library-heading">
+        <div class="section-shell">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="library_eyebrow">Game Library</p>
+            <h2 id="library-heading" data-i18n="library_title">Select a game to launch.</h2>
+            <p data-i18n="library_desc">
+              Click <strong>Play in Browser</strong> on any game to load it into the player above.
+            </p>
+          </div>
+
+          <div class="playable-grid" aria-label="Playable games list">
+            <!-- Game 1: One Two Dice -->
+            <article
+              class="playable-card"
+              data-game-card
+              data-game-id="one-two-dice"
+              data-game-src="Games/OneTwoDice/index.html"
+              data-game-title="One Two Dice"
+              data-game-genre="Idle Clicker"
+              data-game-icon="assets/dice-clicker-idle-icon.png"
+              data-game-aspect="16-9"
+            >
+              <div class="playable-card-top">
+                <div class="playable-card-icon">
+                  <img src="assets/dice-clicker-idle-icon.png" alt="Dice Clicker Idle icon">
+                </div>
+                <div class="playable-card-meta">
+                  <span class="play-tag" data-i18n="game_web_playable">Web Playable</span>
+                  <h3>One Two Dice</h3>
+                  <p class="eyebrow" style="margin: 0; font-size: 0.75rem;" data-i18n="game_genre_idle">Idle Clicker</p>
+                </div>
+              </div>
+              <p class="playable-card-desc" data-i18n="game_dice_desc">
+                Tap, roll dice, upgrade multipliers and chase lucky streaks in this punchy idle loop.
+              </p>
+              <div class="playable-card-actions">
+                <div class="button-wrap">
+                  <button class="button button-primary" type="button" data-load-game>
+                    <span data-i18n="game_btn_play">Play in Browser</span>
+                  </button>
+                  <div class="button-shadow"></div>
+                </div>
+                <a class="text-link" href="dice-clicker-idle.html" data-i18n="game_btn_info">Game Info</a>
+              </div>
+            </article>
+
+            <!-- Game 2: Hoop Pong -->
+            <article
+              class="playable-card"
+              data-game-card
+              data-game-id="hoop-pong"
+              data-game-src="Games/HoopPong/index.html"
+              data-game-title="Hoop Pong"
+              data-game-genre="Arcade Sports"
+              data-game-icon="assets/HoopPong-icon.png"
+              data-game-aspect="9-16"
+            >
+              <div class="playable-card-top">
+                <div class="playable-card-icon">
+                  <img src="assets/HoopPong-icon.png" alt="Hoop Pong icon">
+                </div>
+                <div class="playable-card-meta">
+                  <span class="play-tag" data-i18n="game_web_playable">Web Playable</span>
+                  <h3>Hoop Pong</h3>
+                  <p class="eyebrow" style="margin: 0; font-size: 0.75rem;" data-i18n="game_basket_eyebrow">Arcade Sports</p>
+                </div>
+              </div>
+              <p class="playable-card-desc" data-i18n="game_basket_desc">
+                Bounce, aim, and score in this fast-paced arcade basketball game.
+              </p>
+              <div class="playable-card-actions">
+                <div class="button-wrap">
+                  <button class="button button-primary" type="button" data-load-game>
+                    <span data-i18n="game_btn_play">Play in Browser</span>
+                  </button>
+                  <div class="button-shadow"></div>
+                </div>
+                <a class="text-link" href="hoop-pong.html" data-i18n="game_btn_info">Game Info</a>
+              </div>
+            </article>
+
+            <!-- Game 3: Jump Todo -->
+            <article
+              class="playable-card"
+              data-game-card
+              data-game-id="Jump Todo"
+              data-game-src="jumptodo.html"
+              data-game-title="Jump Todo"
+              data-game-genre="Arcade Jumper"
+              data-game-icon="assets/JumpTodo-icon.png"
+              data-game-aspect="9-16"
+            >
+              <div class="playable-card-top">
+                <div class="playable-card-icon">
+                  <img src="assets/JumpTodo-icon.png" alt="Jump Todo icon">
+                </div>
+                <div class="playable-card-meta">
+                  <span class="play-tag" data-i18n="game_web_playable">Web Playable</span>
+                  <h3>Jump Todo</h3>
+                  <p class="eyebrow" style="margin: 0; font-size: 0.75rem;" data-i18n="game_genre_arcade">Arcade Jumper</p>
+                </div>
+              </div>
+              <p class="playable-card-desc" data-i18n="game_jump_desc">
+                Fast vertical timing, coin collection and upward momentum built for clean retries.
+              </p>
+              <div class="playable-card-actions">
+                <div class="button-wrap">
+                  <button class="button button-primary" type="button" disabled style="opacity: 0.5; cursor: not-allowed;">
+                    <span data-i18n="game_btn_coming">Coming Soon</span>
+                  </button>
+                  <div class="button-shadow"></div>
+                </div>
+                <a class="text-link" href="jumptodo.html" data-i18n="game_btn_info">Game Info</a>
+              </div>
+            </article>
+          </div>
+
+
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-shell footer-shell">
+        <p>&copy; <span data-year>2026</span> <span class="notranslate" translate="no">Twoday Studio</span></p>
+        <nav aria-label="Footer navigation">
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="analytics.html" data-i18n="footer_stats">Live Stats</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  <script src="tds-analytics.js" defer></script>
+</body>
+</html>
+
+
+
+

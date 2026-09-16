@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Twoday Studio is a small indie game studio creating fast, juicy and replayable mobile games."
+    >
+    <meta name="theme-color" content="#0d0f13">
+    <title>Twoday Studio | Tiny games. Big obsession.</title>
+    <link rel="icon" type="image/png" href="assets/twodaysENT_Logo-white.png">
+    <link rel="apple-touch-icon" href="assets/twodaysENT_Logo-white.png">
+    <link rel="stylesheet" href="styles.css?v=10">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q303JMY4XC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q303JMY4XC');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+                <header class="site-header" data-header>
+      <div class="section-shell nav-shell">
+        <a class="brand" href="/" aria-label="Twoday Studio home">
+          <img src="assets/twodaysENT_Logo-white.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-light" />
+          <img src="assets/mascotwht.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-dark" />
+          <span class="brand-text"><span class="notranslate" translate="no">TWODAY STUDIO</span></span>
+        </a>
+
+        <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+          <div class="nav-indicator" aria-hidden="true"></div>
+          <a href="play.html" style="color: var(--mint);" data-i18n="nav_play">Play</a>
+          <a href="games.html" data-i18n="nav_games">Games</a>
+          <a href="/#about" data-i18n="nav_about">About</a>
+          <a href="/#vision" data-i18n="nav_vision">Vision</a>
+          <a href="press.html" data-i18n="nav_press">Press</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <div class="header-controls">
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-dropdown-toggle" id="lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+              <span id="lang-dropdown-label">🇺🇸 EN</span>
+              <span class="lang-dropdown-chevron" aria-hidden="true">&#9660;</span>
+            </button>
+            <div class="lang-dropdown-menu" role="listbox" id="lang-dropdown-menu">
+              <button data-lang="en" class="is-selected">🇺🇸 EN - English</button>
+              <button data-lang="tr">🇹🇷 TR - Türkçe</button>
+              <button data-lang="ar">🇪🇬 AR - عربي</button>
+              <button data-lang="zh">🇨🇳 ZH - 中文</button>
+            </div>
+          </div>
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+            <option value="ar">🇪🇬 AR</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+            <span>🌓</span>
+          </button>
+          
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="home" aria-labelledby="hero-title">
+        <img class="hero-image hero-image-black" src="assets/twoday-game-art_black.png" alt="" decoding="async">
+        <img class="hero-image hero-image-white" src="assets/twoday-game-art_white.png" alt="" decoding="async">
+        <div class="hero-overlay" aria-hidden="true"></div>
+
+        <div class="section-shell hero-content">
+          <p class="eyebrow" data-i18n="hero_eyebrow">Independent mobile games</p>
+          <h1 id="hero-title" class="hero-logo-heading">
+            <img src="assets/twodayhorizonblack.png" alt="Twoday Studio" class="hero-logo hero-logo-black" />
+            <img src="assets/twodayhorizonwhite.png" alt="Twoday Studio" class="hero-logo hero-logo-white" />
+            <span class="sr-only">Twoday Studio</span>
+          </h1>
+          <p class="tagline" data-i18n="hero_tagline">Games on the go for Everyone</p>
+          <p class="hero-description" data-i18n="hero_desc">
+            TwoDay Studio is a lean, highly-agile two-person team. We iterate and ship games at breakneck speed, creating fun, delightful mobile experiences that anyone can pick up, play, and enjoy anytime on the go.
+          </p>
+
+          <div class="button-row" aria-label="Primary actions">
+            <div class="button-wrap"><a class="button button-primary" href="play.html"><span data-i18n="hero_btn_play">Play in Browser</span></a><div class="button-shadow"></div></div>
+            <div class="button-wrap"><a class="button button-secondary" href="games.html"><span data-i18n="hero_btn_games">Our Games</span></a><div class="button-shadow"></div></div>
+            <div class="button-wrap"><a class="button button-secondary" href="#contact"><span data-i18n="hero_btn_contact">Contact</span></a><div class="button-shadow"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-games" id="games" aria-labelledby="games-title">
+        <div class="section-shell">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="games_eyebrow">Games</p>
+            <h2 id="games-title" data-i18n="games_title">Mobile-first games with compact loops.</h2>
+            <p data-i18n="games_desc">
+              Our current slate focuses on quick sessions, strong feedback and ideas that can
+              grow from simple prototypes into replayable daily habits.
+            </p>
+          </div>
+
+          <div class="game-showcase" aria-label="Twoday Studio games">
+            <article class="game-showcase-card">
+              <a class="game-showcase-icon" href="play.html?game=one-two-dice" aria-label="Play One Two Dice in browser">
+                <img src="assets/dice-clicker-idle-icon.png" alt="One Two Dice app icon" loading="lazy">
+              </a>
+              <div class="game-showcase-copy">
+                <p class="eyebrow" data-i18n="game_dice_eyebrow">Idle clicker &bull; Web Playable</p>
+                <h3>One Two Dice</h3>
+                <p data-i18n="game_dice_desc">
+                  Roll, tap, upgrade and chase lucky streaks in a punchy idle loop built for
+                  short mobile sessions.
+                </p>
+                <ul class="compact-list">
+                  <li data-i18n="game_dice_f1">Dice-based rewards</li>
+                  <li data-i18n="game_dice_f2">Upgrade-focused progression</li>
+                  <li data-i18n="game_dice_f3">Juicy tap feedback</li>
+                </ul>
+                <div class="button-row">
+                  <div class="button-wrap"><a class="button button-primary" href="play.html?game=one-two-dice"><span data-i18n="game_btn_play">Play in Browser</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="one-two-dice.html"><span data-i18n="game_btn_page">Game Page</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="#contact"><span data-i18n="game_btn_business">Business Contact</span></a><div class="button-shadow"></div></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="game-showcase-card">
+              <a class="game-showcase-icon" href="play.html?game=hoop-pong" aria-label="Play Hoop Pong in browser">
+                <img src="assets/HoopPong-icon.png" alt="Hoop Pong app icon" loading="lazy">
+              </a>
+              <div class="game-showcase-copy">
+                <p class="eyebrow" data-i18n="game_basket_eyebrow">Arcade Sports &bull; Web Playable</p>
+                <h3>Hoop Pong</h3>
+                <p data-i18n="game_basket_desc">
+                  Bounce, aim, and score in this fast-paced arcade basketball game.
+                </p>
+                <ul class="compact-list">
+                  <li data-i18n="game_basket_f1">Fast-paced gameplay</li>
+                  <li data-i18n="game_basket_f2">Arcade style scoring</li>
+                  <li data-i18n="game_basket_f3">Responsive physics</li>
+                </ul>
+                <div class="button-row">
+                  <div class="button-wrap"><a class="button button-primary" href="play.html?game=hoop-pong"><span data-i18n="game_btn_play">Play in Browser</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="hoop-pong.html"><span data-i18n="game_btn_page">Game Page</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="#contact"><span data-i18n="game_btn_business">Business Contact</span></a><div class="button-shadow"></div></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="game-showcase-card">
+              <a class="game-showcase-icon" href="jumptodo.html" aria-label="Open Jump Todo page">
+                <img src="assets/JumpTodo-icon.png" alt="Jump Todo app icon" loading="lazy">
+              </a>
+              <div class="game-showcase-copy">
+                <p class="eyebrow" data-i18n="game_jump_eyebrow">Arcade jumper &bull; Web Playable</p>
+                <h3>Jump Todo</h3>
+                <p data-i18n="game_jump_desc">
+                  Jump upward, collect coins and keep momentum alive in a clean vertical arcade
+                  game designed for quick retries.
+                </p>
+                <ul class="compact-list">
+                  <li data-i18n="game_jump_f1">Vertical jump flow</li>
+                  <li data-i18n="game_jump_f2">Coin chase pacing</li>
+                  <li data-i18n="game_jump_f3">Simple mobile timing</li>
+                </ul>
+                <div class="button-row">
+                  <div class="button-wrap"><button class="button button-primary" disabled style="opacity: 0.5; cursor: not-allowed;"><span data-i18n="game_btn_coming">Coming Soon</span></button><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="jumptodo.html"><span data-i18n="game_btn_page">Game Page</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="#contact"><span data-i18n="game_btn_business">Business Contact</span></a><div class="button-shadow"></div></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="about" aria-labelledby="about-title">
+        <div class="section-shell split-section">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="about_eyebrow">About</p>
+            <h2 id="about-title" data-i18n="about_title">Two people, rapid execution, massive potential.</h2>
+          </div>
+
+          <div class="copy-stack">
+            <p data-i18n="about_p1">
+              Twoday Studio is a two-person powerhouse focused on building simple, addictive, and character-driven games. We execute fast, iterate constantly, and ship high-quality mobile experiences.
+            </p>
+            <p data-i18n="about_p2">
+              We care about rapid prototyping and cross-cultural appeal. Representing a global audience (English, Turkish, Arabic, and Chinese), we are actively seeking publishing partners and investors to help scale our agile production pipeline to the next level.
+            </p>
+            <p data-i18n="about_p3">
+              Instead of chasing huge systems too early, we test compact mechanics, readable progression and playful themes until the core loop feels undeniably clear.
+            </p>
+          </div>
+        </div>
+
+        <div class="section-shell feature-grid" aria-label="Studio focus areas">
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">01</span>
+            <h3 data-i18n="feat_1_title">Rapid Prototyping</h3>
+            <p data-i18n="feat_1_desc">Small ideas become playable quickly, then earn their way forward through feel.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">02</span>
+            <h3 data-i18n="feat_2_title">Mobile-First Design</h3>
+            <p data-i18n="feat_2_desc">Every loop is shaped for quick sessions, thumb-friendly play and clean feedback.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">03</span>
+            <h3 data-i18n="feat_3_title">Experimental Ideas</h3>
+            <p data-i18n="feat_3_desc">We chase memorable hooks, expressive characters and playful systems with bite.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-vision" id="vision" aria-labelledby="vision-title">
+        <div class="section-shell vision-layout">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="vision_eyebrow">Vision</p>
+            <h2 id="vision-title" data-i18n="vision_title">Small games that feel worth coming back to.</h2>
+            <p data-i18n="vision_desc">
+              We want <span class="notranslate" translate="no">Twoday Studio</span> games to be easy to start, clear to read and satisfying
+              enough to live on a phone for months.
+            </p>
+          </div>
+
+          <div class="vision-list">
+            <article>
+              <h3 data-i18n="vis_1_title">Player First</h3>
+              <p data-i18n="vis_1_desc">Readable goals, short sessions and feedback that respects the player's time.</p>
+            </article>
+            <article>
+              <h3 data-i18n="vis_2_title">Polished Loops</h3>
+              <p data-i18n="vis_2_desc">Simple mechanics, strong pacing and rewards that feel good without being noisy.</p>
+            </article>
+            <article>
+              <h3 data-i18n="vis_3_title">Smart Growth</h3>
+              <p data-i18n="vis_3_desc">Prototype quickly, learn from playtests and scale only the ideas that earn it.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-press" id="press" aria-labelledby="press-title">
+        <div class="section-shell press-panel">
+          <div>
+            <p class="eyebrow" data-i18n="press_eyebrow">Press / Business</p>
+            <h2 id="press-title" data-i18n="press_title">For publishers, investors and press.</h2>
+            <p data-i18n="press_desc">
+              Twoday Studio is open to conversations with publishing partners, investors, platform teams and press contacts. As an agile and highly productive 2-person team, we are ready to scale globally.
+            </p>
+          </div>
+
+          <div class="button-wrap">
+            <a class="button button-primary" href="press.html">
+              <span data-i18n="press_btn">View Press Kit</span>
+            </a>
+            <div class="button-shadow"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <div class="section-shell">
+          <div class="section-heading contact-heading">
+            <p class="eyebrow" data-i18n="contact_eyebrow">Contact</p>
+            <h2 id="contact-title" data-i18n="contact_title">Let's talk games.</h2>
+            <p data-i18n="contact_desc">
+              Use the business form for partnerships, publishing, investment or press. Use
+              Need Help for player support and bug reports.
+            </p>
+          </div>
+
+          <div class="contact-grid">
+            <form class="form-card" data-mail-form data-form-type="business">
+              <div class="form-card-heading">
+                <h3 data-i18n="contact_biz_title">Business Contact</h3>
+                <p data-i18n="contact_biz_desc">For publishers, investors, press, platform teams and collaboration requests.</p>
+              </div>
+
+              <label>
+                <span data-i18n="contact_name">Name</span>
+                <input name="name" autocomplete="name" required>
+              </label>
+              <label>
+                <span data-i18n="contact_email">Email</span>
+                <input name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                <span data-i18n="contact_company">Company</span>
+                <input name="company" autocomplete="organization">
+              </label>
+              <label>
+                <span data-i18n="contact_reason">Reason</span>
+                <select name="reason" required>
+                  <option value="" data-i18n="opt_select_reason">Select a reason</option>
+                  <option data-i18n="opt_publish">Publishing</option>
+                  <option data-i18n="opt_invest">Investment</option>
+                  <option data-i18n="opt_press">Press</option>
+                  <option data-i18n="opt_platform">Platform / Store</option>
+                  <option data-i18n="opt_partner">Partnership</option>
+                  <option data-i18n="opt_other">Other</option>
+                </select>
+              </label>
+              <label>
+                <span data-i18n="contact_msg">Message</span>
+                <textarea name="message" rows="5" required></textarea>
+              </label>
+
+              <div class="button-wrap"><button class="button button-primary" type="submit"><span data-i18n="contact_btn_email">Open Email Draft</span></button><div class="button-shadow"></div></div>
+              <p class="form-note" data-form-status data-i18n="contact_biz_note">
+                This static form opens your email app with the message already filled in.
+              </p>
+            </form>
+
+            <form class="form-card" data-mail-form data-form-type="support">
+              <div class="form-card-heading">
+                <h3 data-i18n="contact_help_title">Need Help</h3>
+                <p data-i18n="contact_help_desc">Create a support ticket draft for game issues, bugs or player questions.</p>
+              </div>
+
+              <label>
+                <span data-i18n="contact_help_email">Your Email</span>
+                <input name="email" type="email" autocomplete="email" required>
+              </label>
+              <label>
+                <span data-i18n="contact_help_game">Game</span>
+                <select name="game" required>
+                  <option value="" data-i18n="opt_select_game">Select a game</option>
+                  <option>One Two Dice</option>
+                  <option>Hoop Pong</option>
+                  <option>Jump Todo</option>
+                  <option data-i18n="opt_game_web">Website</option>
+                  <option data-i18n="opt_other">Other</option>
+                </select>
+              </label>
+              <label>
+                <span data-i18n="contact_help_issue">Issue Type</span>
+                <select name="issue" required>
+                  <option value="" data-i18n="opt_select_issue">Select issue type</option>
+                  <option data-i18n="opt_bug">Bug Report</option>
+                  <option data-i18n="opt_q">Gameplay Question</option>
+                  <option data-i18n="opt_acc">Account / Purchase</option>
+                  <option data-i18n="opt_feed">Feedback</option>
+                  <option data-i18n="opt_other">Other</option>
+                </select>
+              </label>
+              <label>
+                <span data-i18n="contact_help_dev">Device / Platform</span>
+                <input name="device" placeholder="Example: Android, iPhone, Chrome">
+              </label>
+              <label>
+                <span data-i18n="contact_help_details">Details</span>
+                <textarea name="message" rows="5" required></textarea>
+              </label>
+
+              <div class="button-wrap"><button class="button button-secondary" type="submit"><span data-i18n="contact_btn_ticket">Create Ticket Email</span></button><div class="button-shadow"></div></div>
+              <p class="form-note" data-form-status data-i18n="contact_help_note">
+                A ticket ID will be generated in the email subject.
+              </p>
+            </form>
+          </div>
+
+          <div class="contact-card contact-links-card">
+            <a class="email-link" href="mailto:contact@twodaystudio.com">contact@twodaystudio.com</a>
+            <div class="social-links button-row" aria-label="Social links">
+              <div class="button-wrap"><a href="#" class="button button-secondary" data-placeholder-link aria-label="Twoday Studio on Google Play, coming soon"><span>Google Play</span></a><div class="button-shadow"></div></div>
+              <div class="button-wrap"><a href="#" class="button button-secondary" data-placeholder-link aria-label="Twoday Studio on Instagram, coming soon"><span>Instagram</span></a><div class="button-shadow"></div></div>
+              <div class="button-wrap"><a href="#" class="button button-secondary" data-placeholder-link aria-label="Twoday Studio on TikTok, coming soon"><span>TikTok</span></a><div class="button-shadow"></div></div>
+              <div class="button-wrap"><a href="#" class="button button-secondary" data-placeholder-link aria-label="Twoday Studio on YouTube, coming soon"><span>YouTube</span></a><div class="button-shadow"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-shell footer-shell">
+        <p>&copy; <span data-year>2026</span> <span class="notranslate" translate="no">Twoday Studio</span></p>
+        <nav aria-label="Footer navigation">
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="analytics.html" data-i18n="footer_stats">Live Stats</a>
+          <a href="#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <aside class="consumer-ai" data-consumer-ai aria-label="Twoday Studio AI">
+      <button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open Twoday Studio AI">✦</button>
+      <section class="consumer-ai-panel" id="consumer-ai-panel" hidden>
+        <header class="consumer-ai-header">
+          <div>
+            <p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p>
+            <h2 data-ai-label="title">Studio AI</h2>
+          </div>
+          <button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button>
+        </header>
+        <div class="consumer-ai-messages" data-ai-messages aria-live="polite">
+          <p class="consumer-ai-message is-assistant" data-ai-welcome>Ask about our games, studio, or publishing.</p>
+        </div>
+        <form class="consumer-ai-form" data-ai-form>
+          <label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label>
+          <textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask Twoday Studio AI..."></textarea>
+          <div class="consumer-ai-actions">
+            <button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Allow web search">⌕ <span data-ai-label="search">Web search</span></button>
+            <button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button>
+          </div>
+        </form>
+      </section>
+    </aside>
+
+    <script src="script.js" defer></script>
+    <script src="tds-analytics.js" defer></script>
+    <script src="consumer-ai.js" defer></script>
+  </body>
+</html>
+
+
+
+

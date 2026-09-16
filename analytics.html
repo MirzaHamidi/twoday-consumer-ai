@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Live analytics and player statistics for Twoday Studio games. See unique visitors, game play counts, session durations and streaks in real time."
+    >
+    <meta name="theme-color" content="#0d0f13">
+    <title>Live Stats | Twoday Studio</title>
+    <link rel="icon" type="image/png" href="assets/twodaysENT_Logo-white.png">
+    <link rel="apple-touch-icon" href="assets/twodaysENT_Logo-white.png">
+    <link rel="stylesheet" href="styles.css?v=10">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q303JMY4XC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q303JMY4XC');
+    </script>
+    <style>
+      /* ── Retention Section Styles ── */
+      .retention-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      .retention-card {
+        background: var(--surface, #fff);
+        border: 1px solid var(--border, #e5e7eb);
+        border-radius: 1rem;
+        padding: 1.5rem;
+      }
+      .retention-card-game {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mint, #16a085);
+        margin-bottom: 0.75rem;
+      }
+      .retention-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid var(--border, #e5e7eb);
+        font-size: 0.9rem;
+        gap: 1rem;
+      }
+      .retention-row:last-child { border-bottom: none; }
+      .retention-label { color: var(--text-muted, #888); }
+      .retention-value { font-weight: 700; color: var(--text, #111); }
+      .retention-bar-wrap {
+        margin-top: 0.75rem;
+        background: var(--border, #e5e7eb);
+        border-radius: 99px;
+        height: 6px;
+        overflow: hidden;
+      }
+      .retention-bar {
+        height: 100%;
+        border-radius: 99px;
+        background: var(--mint, #16a085);
+        transition: width 1s ease;
+      }
+      .retention-bar-label {
+        margin-top: 0.35rem;
+        font-size: 0.75rem;
+        color: var(--text-muted, #888);
+        text-align: right;
+      }
+      .section-note {
+        font-size: 0.8rem;
+        color: var(--text-muted, #888);
+        margin-top: 1rem;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+                <header class="site-header" data-header>
+      <div class="section-shell nav-shell">
+        <a class="brand" href="/" aria-label="Twoday Studio home">
+          <img src="assets/twodaysENT_Logo-white.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-light" />
+          <img src="assets/mascotwht.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-dark" />
+          <span class="brand-text"><span class="notranslate" translate="no">TWODAY STUDIO</span></span>
+        </a>
+
+        <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+          <div class="nav-indicator" aria-hidden="true"></div>
+          <a href="play.html" style="color: var(--mint);" data-i18n="nav_play">Play</a>
+          <a href="games.html" data-i18n="nav_games">Games</a>
+          <a href="/#about" data-i18n="nav_about">About</a>
+          <a href="/#vision" data-i18n="nav_vision">Vision</a>
+          <a href="press.html" data-i18n="nav_press">Press</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <div class="header-controls">
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-dropdown-toggle" id="lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+              <span id="lang-dropdown-label">🇺🇸 EN</span>
+              <span class="lang-dropdown-chevron" aria-hidden="true">&#9660;</span>
+            </button>
+            <div class="lang-dropdown-menu" role="listbox" id="lang-dropdown-menu">
+              <button data-lang="en" class="is-selected">🇺🇸 EN - English</button>
+              <button data-lang="tr">🇹🇷 TR - Türkçe</button>
+              <button data-lang="ar">🇪🇬 AR - عربي</button>
+              <button data-lang="zh">🇨🇳 ZH - 中文</button>
+            </div>
+          </div>
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+            <option value="ar">🇪🇬 AR</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+            <span>🌓</span>
+          </button>
+          
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Hero -->
+      <section class="page-hero" aria-labelledby="stats-title">
+        <div class="section-shell" style="text-align: center;">
+          <p class="eyebrow" data-i18n="stats_eyebrow">Real-Time Data</p>
+          <h1 id="stats-title" data-i18n="stats_title">Live Stats</h1>
+          <p style="max-width: 480px; margin-inline: auto;" data-i18n="stats_desc">
+            Transparent analytics for <span class="notranslate" translate="no">Twoday Studio</span>.
+            Every number is deduplicated - no inflated counts.
+          </p>
+        </div>
+      </section>
+
+      <!-- Top-level counters -->
+      <section class="section">
+        <div class="section-shell">
+          <div class="stats-grid">
+            <article class="stat-card glass-panel">
+              <span class="stat-number" id="stat-visitors">-</span>
+              <span class="stat-label" data-i18n="stat_visitors">Unique Visitors</span>
+              <span class="stat-desc" data-i18n="stat_visitors_desc">Total unique browsers that visited the site</span>
+            </article>
+            <article class="stat-card glass-panel">
+              <span class="stat-number" id="stat-plays">-</span>
+              <span class="stat-label" data-i18n="stat_plays">Game Plays</span>
+              <span class="stat-desc" data-i18n="stat_plays_desc">Total unique game launches across all games</span>
+            </article>
+            <article class="stat-card glass-panel">
+              <span class="stat-number" id="stat-games">-</span>
+              <span class="stat-label" data-i18n="stat_games">Games Available</span>
+              <span class="stat-desc" data-i18n="stat_games_desc">Playable games on the platform</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Per-game breakdown -->
+      <section class="section">
+        <div class="section-shell">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="stats_breakdown_eyebrow">Per-Game Breakdown</p>
+            <h2 data-i18n="stats_breakdown_title">Play Counts by Game</h2>
+          </div>
+          <div id="game-breakdown">
+            <p style="color: var(--text-muted);"><span data-i18n="stat_loading">Loading&hellip;</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Retention & Engagement -->
+      <section class="section">
+        <div class="section-shell">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="stats_retention_eyebrow">Retention &amp; Engagement</p>
+            <h2 data-i18n="stats_retention_title">Session &amp; Streak Metrics</h2>
+          </div>
+          <div id="retention-breakdown">
+            <p style="color: var(--text-muted);"><span data-i18n="stat_loading">Loading&hellip;</span></p>
+          </div>
+          <p class="section-note" data-i18n="stats_note">
+            Session duration is tracked via the Page Visibility API - time spent with the game tab hidden is excluded.<br>
+            Streaks count consecutive days a unique player returned to the same game.<br>
+            D1/D7 retention is tracked natively via GA4 Cohort Explorations using each player's persistent anonymous ID.
+          </p>
+        </div>
+      </section>
+
+      <!-- Footer note -->
+      <section class="section">
+        <div class="section-shell" style="text-align: center; padding-bottom: 2rem;">
+          <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.8; max-width: 520px; margin-inline: auto;" data-i18n="stats_footer_note">
+            Analytics powered by <strong>Google Analytics 4</strong> &amp; <strong>Cloudflare Workers + D1</strong><br>
+            Data is deduplicated across 3 layers: client localStorage, database PRIMARY KEY, and IP+UA fingerprint
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-shell footer-shell">
+        <p>&copy; <span data-year>2026</span> <span class="notranslate" translate="no">Twoday Studio</span></p>
+        <nav aria-label="Footer navigation">
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="analytics.html" data-i18n="footer_stats">Live Stats</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+    <script src="tds-analytics.js" defer></script>
+    <script>
+      /**
+       * ⚠️ AI AGENT WARNING: CRITICAL BUSINESS INFRASTRUCTURE ⚠️
+       * This script fetches live investor-grade data from the Cloudflare Worker.
+       * DO NOT modify the TDS_API URL, the fetch logic, or the data rendering.
+       * Any breakage here corrupts business metrics used in investor pitches.
+       */
+      (function () {
+        var TDS_API = "https://tds-analytics.twodaystudio.workers.dev";
+
+        var elVisitors  = document.getElementById("stat-visitors");
+        var elPlays     = document.getElementById("stat-plays");
+        var elGames     = document.getElementById("stat-games");
+        var elBreakdown = document.getElementById("game-breakdown");
+        var elRetention = document.getElementById("retention-breakdown");
+
+        // Animated number counter (ease-out cubic)
+        function animateCounter(el, target) {
+          if (!el) return;
+          if (target <= 0) { el.textContent = "0"; return; }
+          var dur = 1400, start = performance.now();
+          (function step(now) {
+            var t = Math.min((now - start) / dur, 1);
+            var eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = Math.floor(eased * target).toLocaleString();
+            if (t < 1) requestAnimationFrame(step);
+          })(performance.now());
+        }
+
+        // "one-two-dice" → "One Two Dice"
+        function fmtName(id) {
+          return id.replace(/[-_]/g, " ").replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        }
+
+        // Format seconds → "1h 4m", "12m 30s", "45s"
+        function fmtTime(sec) {
+          if (!sec || sec <= 0) return "0s";
+          var h = Math.floor(sec / 3600);
+          var m = Math.floor((sec % 3600) / 60);
+          var s = sec % 60;
+          if (h > 0) return h + "h " + m + "m";
+          if (m > 0) return m + "m " + s + "s";
+          return s + "s";
+        }
+
+        if (!TDS_API) {
+          elVisitors.textContent = "-";
+          elPlays.textContent    = "-";
+          elGames.textContent    = "1";
+          elBreakdown.innerHTML  = '<p style="color:var(--text-muted);"><span data-i18n="stat_no_backend">Analytics backend not yet deployed.</span></p>';
+          elRetention.innerHTML  = '<p style="color:var(--text-muted);"><span data-i18n="stat_no_backend">Analytics backend not yet deployed.</span></p>';
+          return;
+        }
+
+        function loadStats() {
+          fetch(TDS_API + "/api/stats?t=" + Date.now())
+            .then(function(res) {
+              if (!res.ok) throw new Error("Network response was not ok");
+              return res.json();
+            })
+            .then(function(data) {
+            // ── Top counters ──
+            animateCounter(elVisitors, data.visitors || 0);
+            animateCounter(elPlays,    data.totalPlays || 0);
+
+            var games = data.games || {};
+            var ids   = Object.keys(games);
+            elGames.textContent = Math.max(ids.length, 1);
+
+            // ── Per-game play counts ──
+            if (ids.length === 0) {
+              elBreakdown.innerHTML = '<p style="color:var(--text-muted);"><span data-i18n="stat_no_plays">No game plays recorded yet. Be the first!</span></p>';
+              elRetention.innerHTML = '<p style="color:var(--text-muted);"><span data-i18n="stat_no_eng">No engagement data yet. Play a game to start tracking!</span></p>';
+              return;
+            }
+
+            var breakHtml = '<div class="game-stats-list">';
+            ids.forEach(function(id) {
+              var stat  = games[id];
+              var count = typeof stat === "number" ? stat : (stat.plays || 0);
+              var dur   = typeof stat === "object" ? (stat.duration || 0) : 0;
+              breakHtml +=
+                '<div class="game-stat-row glass-panel">' +
+                '<span class="game-stat-name">' + fmtName(id) +
+                  ' <span style="font-size:0.8em;color:var(--text-muted);font-weight:normal;">(' + fmtTime(dur) + ' total playtime)</span>' +
+                '</span>' +
+                '<span class="game-stat-count">' + count.toLocaleString() + ' plays</span>' +
+                '</div>';
+            });
+            breakHtml += '</div>';
+            elBreakdown.innerHTML = breakHtml;
+
+            // ── Retention & streak cards ──
+            var retHtml = '<div class="retention-grid">';
+            ids.forEach(function(id) {
+              var stat          = games[id];
+              var plays         = typeof stat === "number" ? stat : (stat.plays || 0);
+              var totalDur      = typeof stat === "object" ? (stat.duration || 0) : 0;
+              var maxStreak     = typeof stat === "object" ? (stat.max_streak || 0) : 0;
+              var totalSessions = typeof stat === "object" ? (stat.total_sessions || 0) : 0;
+              var avgDur        = totalSessions > 0 ? Math.floor(totalDur / totalSessions) : 0;
+              var engRate       = plays > 0 ? Math.round((totalSessions / plays) * 100) : 0;
+              // Stickiness: avg session duration vs a 5-minute benchmark, capped at 100%
+              var stickiness    = Math.min(100, Math.round((avgDur / 300) * 100));
+              var sampleSizeNote = totalSessions < 10 ? ' <span style="color:#e74c3c;font-size:0.8em;font-weight:normal;"><span data-i18n="stat_low_data">(Low Data)</span></span>' : '';
+              var d1Retention   = typeof stat === "object" && typeof stat.d1_retention === "number" ? stat.d1_retention + '%' : 'N/A';
+              var d7Retention   = typeof stat === "object" && typeof stat.d7_retention === "number" ? stat.d7_retention + '%' : 'N/A';
+
+              retHtml +=
+                '<div class="retention-card glass-panel">' +
+                  '<p class="retention-card-game">' + fmtName(id) + '</p>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_starts">Game Starts</span>' +
+                    '<span class="retention-value">' + plays.toLocaleString() + '</span>' +
+                  '</div>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_valid_sessions">Valid Sessions (>10s)</span>' +
+                    '<span class="retention-value">' + totalSessions.toLocaleString() + '</span>' +
+                  '</div>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_total_playtime">Total Playtime (All Users)</span>' +
+                    '<span class="retention-value">' + fmtTime(totalDur) + '</span>' +
+                  '</div>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_avg_session">Avg Session Duration</span>' +
+                    '<span class="retention-value">' + fmtTime(avgDur) + '</span>' +
+                  '</div>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_longest_streak">Longest Return Streak</span>' +
+                    '<span class="retention-value">' + maxStreak + ' day' + (maxStreak !== 1 ? 's' : '') + '</span>' +
+                  '</div>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_d1">D1 Retention</span>' +
+                    '<span class="retention-value">' + d1Retention + '</span>' +
+                  '</div>' +
+
+                  '<div class="retention-row">' +
+                    '<span class="retention-label" data-i18n="stat_d7">D7 Retention</span>' +
+                    '<span class="retention-value">' + d7Retention + '</span>' +
+                  '</div>' +
+
+                  // Stickiness bar (Engagement Target)
+                  '<div style="margin-top:1rem;">' +
+                    '<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;font-weight:600;">' +
+                      '<span data-i18n="stat_5min">5-Min Target</span>' + sampleSizeNote + '</span>' +
+                      '<span>' + stickiness + '%</span>' +
+                    '</div>' +
+                    '<div class="retention-bar-wrap">' +
+                      '<div class="retention-bar" style="width:' + stickiness + '%;background:' + (stickiness >= 80 ? '#16a085' : stickiness >= 40 ? '#f39c12' : '#e74c3c') + '"></div>' +
+                    '</div>' +
+                  '</div>' +
+
+                  // Play-Through Rate bar
+                  '<div style="margin-top:0.75rem;">' +
+                    '<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted);margin-bottom:0.35rem;font-weight:600;">' +
+                      '<span data-i18n="stat_ptr">Play-Through Rate</span>' +
+                      '<span>' + engRate + '%</span>' +
+                    '</div>' +
+                    '<div class="retention-bar-wrap">' +
+                      '<div class="retention-bar" style="width:' + Math.min(engRate, 100) + '%;background:' + (engRate >= 60 ? '#16a085' : engRate >= 30 ? '#f39c12' : '#e74c3c') + '"></div>' +
+                    '</div>' +
+                    '<p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.25rem;text-align:right;"><span data-i18n="stat_ptr_desc">Valid sessions vs game starts</span></p>' +
+                  '</div>' +
+
+                '</div>';
+            });
+            retHtml += '</div>';
+            elRetention.innerHTML = retHtml;
+            if (typeof applyTranslations === 'function' && typeof currentTranslations !== 'undefined') {
+              applyTranslations(currentTranslations);
+            }
+          })
+          .catch(function(err) {
+            console.error("TDS Analytics fetch failed:", err);
+            elVisitors.textContent = "-";
+            elPlays.textContent    = "-";
+            elBreakdown.innerHTML  = '<p style="color:var(--text-muted);"><span data-i18n="stat_fetch_fail">Could not load analytics data. Please try again later.</span></p>';
+            elRetention.innerHTML  = '<p style="color:var(--text-muted);"><span data-i18n="stat_ret_fail">Could not load retention data. Please try again later.</span></p>';
+          });
+        }
+        
+        loadStats();
+      })();
+    </script>
+  </body>
+</html>
+
+
+

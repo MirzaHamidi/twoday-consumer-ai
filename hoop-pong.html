@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Hoop Pong is a fast-paced arcade sports game from Twoday Studio."
+    >
+    <meta name="theme-color" content="#0d0f13">
+    <link rel="icon" type="image/png" href="assets/twodaysENT_Logo-white.png">
+    <link rel="apple-touch-icon" href="assets/twodaysENT_Logo-white.png">
+    <link rel="stylesheet" href="styles.css?v=10">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q303JMY4XC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q303JMY4XC');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+                <header class="site-header" data-header>
+      <div class="section-shell nav-shell">
+        <a class="brand" href="/" aria-label="Twoday Studio home">
+          <img src="assets/twodaysENT_Logo-white.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-light" />
+          <img src="assets/mascotwht.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-dark" />
+          <span class="brand-text"><span class="notranslate" translate="no">TWODAY STUDIO</span></span>
+        </a>
+
+        <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+          <div class="nav-indicator" aria-hidden="true"></div>
+          <a href="play.html" style="color: var(--mint);" data-i18n="nav_play">Play</a>
+          <a href="games.html" data-i18n="nav_games">Games</a>
+          <a href="/#about" data-i18n="nav_about">About</a>
+          <a href="/#vision" data-i18n="nav_vision">Vision</a>
+          <a href="press.html" data-i18n="nav_press">Press</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <div class="header-controls">
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-dropdown-toggle" id="lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+              <span id="lang-dropdown-label">🇺🇸 EN</span>
+              <span class="lang-dropdown-chevron" aria-hidden="true">&#9660;</span>
+            </button>
+            <div class="lang-dropdown-menu" role="listbox" id="lang-dropdown-menu">
+              <button data-lang="en" class="is-selected">🇺🇸 EN - English</button>
+              <button data-lang="tr">🇹🇷 TR - Türkçe</button>
+              <button data-lang="ar">🇪🇬 AR - عربي</button>
+              <button data-lang="zh">🇨🇳 ZH - 中文</button>
+            </div>
+          </div>
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+            <option value="ar">🇪🇬 AR</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+            <span>🌓</span>
+          </button>
+          
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="page-hero game-page-hero" aria-labelledby="basket-title">
+        <div class="section-shell game-detail">
+          <div class="game-detail-icon">
+            <img src="assets/HoopPong-icon.png" alt="Hoop Pong app icon">
+          </div>
+
+          <div class="game-detail-copy">
+            <p class="eyebrow" data-i18n="game_basket_eyebrow">Arcade Sports</p>
+            <h1 id="basket-title">Hoop Pong</h1>
+            <p data-i18n="game_basket_desc">
+              Bounce, aim, and score in this fast-paced arcade basketball game.
+            </p>
+
+            <dl class="game-meta">
+              <div>
+                <dt data-i18n="meta_status">Status</dt>
+                <dd data-i18n="meta_live">Live</dd>
+              </div>
+              <div>
+                <dt data-i18n="meta_platform">Platform</dt>
+                <dd data-i18n="meta_mobile_web">Mobile / Web</dd>
+              </div>
+              <div>
+                <dt data-i18n="meta_genre">Genre</dt>
+                <dd data-i18n="game_basket_eyebrow">Arcade Sports</dd>
+              </div>
+            </dl>
+
+            <div class="button-row">
+              <div class="button-wrap"><a class="button button-primary" href="play.html?game=hoop-pong"><span data-i18n="game_btn_play">Play in Browser</span></a><div class="button-shadow"></div></div>
+              <div class="button-wrap"><span class="button button-secondary disabled-button"><span data-i18n="game_btn_gp_soon">Google Play Soon</span></span><div class="button-shadow"></div></div>
+              <div class="button-wrap"><a class="button button-secondary" href="/#contact"><span data-i18n="nav_contact">Contact</span></a><div class="button-shadow"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-shell feature-grid">
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">01</span>
+            <h3 data-i18n="game_basket_f1">Fast-paced gameplay</h3>
+            <p>Every match is quick, keeping you engaged and on your toes.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">02</span>
+            <h3 data-i18n="game_basket_f2">Arcade style scoring</h3>
+            <p>Classic arcade scoring systems that reward skill and precision.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">03</span>
+            <h3 data-i18n="game_basket_f3">Responsive physics</h3>
+            <p>Tight and satisfying physical feedback on every bounce.</p>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-shell footer-shell">
+        <p>&copy; <span data-year>2026</span> <span class="notranslate" translate="no">Twoday Studio</span></p>
+        <nav aria-label="Footer navigation">
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="analytics.html" data-i18n="footer_stats">Live Stats</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+    <script src="tds-analytics.js" defer></script>
+  </body>
+</html>

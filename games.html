@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Explore mobile games from Twoday Studio, including One Two Dice and Jump Todo."
+    >
+    <meta name="theme-color" content="#0d0f13">
+    <link rel="icon" type="image/png" href="assets/twodaysENT_Logo-white.png">
+    <link rel="apple-touch-icon" href="assets/twodaysENT_Logo-white.png">
+    <link rel="stylesheet" href="styles.css?v=11">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q303JMY4XC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q303JMY4XC');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+                <header class="site-header" data-header>
+      <div class="section-shell nav-shell">
+        <a class="brand" href="/" aria-label="Twoday Studio home">
+          <img src="assets/twodaysENT_Logo-white.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-light" />
+          <img src="assets/mascotwht.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-dark" />
+          <span class="brand-text"><span class="notranslate" translate="no">TWODAY STUDIO</span></span>
+        </a>
+
+        <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+          <div class="nav-indicator" aria-hidden="true"></div>
+          <a href="play.html" style="color: var(--mint);" data-i18n="nav_play">Play</a>
+          <a href="games.html" data-i18n="nav_games">Games</a>
+          <a href="/#about" data-i18n="nav_about">About</a>
+          <a href="/#vision" data-i18n="nav_vision">Vision</a>
+          <a href="press.html" data-i18n="nav_press">Press</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <div class="header-controls">
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-dropdown-toggle" id="lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+              <span id="lang-dropdown-label">🇺🇸 EN</span>
+              <span class="lang-dropdown-chevron" aria-hidden="true">&#9660;</span>
+            </button>
+            <div class="lang-dropdown-menu" role="listbox" id="lang-dropdown-menu">
+              <button data-lang="en" class="is-selected">🇺🇸 EN - English</button>
+              <button data-lang="tr">🇹🇷 TR - Türkçe</button>
+              <button data-lang="ar">🇪🇬 AR - عربي</button>
+              <button data-lang="zh">🇨🇳 ZH - 中文</button>
+            </div>
+          </div>
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+            <option value="ar">🇪🇬 AR</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+            <span>🌓</span>
+          </button>
+          
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="page-hero" aria-labelledby="games-page-title" style="padding-bottom: 5rem;">
+        <div class="section-shell">
+          <div class="section-heading" style="margin-bottom: 3rem; text-align: left;">
+            <p class="eyebrow" data-i18n="library_eyebrow">Library</p>
+            <h1 id="games-page-title" style="margin-bottom: 0.5rem; font-size: clamp(2rem, 5vw, 3.5rem);" data-i18n="hero_btn_games">Our Games</h1>
+            <p style="font-size: 1.1rem; color: var(--text-muted);" data-i18n="library_page_desc">Tap an icon to open a game page or play online.</p>
+          </div>
+
+          <div class="games-grid" aria-label="Twoday Studio game pages">
+            <!-- Game 1: One Two Dice -->
+            <article class="game-grid-card glass-panel" onclick="window.location.href='play.html?game=one-two-dice'" style="cursor: pointer;" tabindex="0" role="link">
+              <div class="game-grid-icon-wrap">
+                <img src="assets/dice-clicker-idle-icon.png" alt="One Two Dice app icon" class="game-grid-icon">
+              </div>
+              <div class="game-grid-copy">
+                <p class="eyebrow" data-i18n="game_genre_idle">Idle Clicker</p>
+                <h3>One Two Dice</h3>
+                <p class="short-desc" data-i18n="game_dice_desc">
+                  Tap, roll dice, upgrade multipliers and chase lucky streaks in this punchy idle loop.
+                </p>
+                <dl class="game-meta-pill-container">
+                  <div class="meta-pill">
+                    <dt data-i18n="meta_status">Status</dt>
+                    <dd data-i18n="meta_live">Live</dd>
+                  </div>
+                  <div class="meta-pill">
+                    <dt data-i18n="meta_platform">Platform</dt>
+                    <dd data-i18n="meta_mobile_web">Mobile / Web</dd>
+                  </div>
+                </dl>
+                <div class="button-row" style="margin-top: auto;">
+                  <div class="button-wrap"><a class="button button-primary" href="play.html" onclick="event.stopPropagation();"><span data-i18n="game_btn_play">Play in Browser</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="dice-clicker-idle.html" onclick="event.stopPropagation();"><span data-i18n="game_btn_details">Game Details</span></a><div class="button-shadow"></div></div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Game 2: Hoop Pong -->
+            <article class="game-grid-card glass-panel" onclick="window.location.href='play.html?game=hoop-pong'" style="cursor: pointer;" tabindex="0" role="link" data-game-id="hoop-pong" data-game-src="Games/HoopPong/index.html" data-game-title="Hoop Pong" data-game-genre="Arcade Sports" data-game-icon="assets/HoopPong-icon.png" data-game-aspect="9-16">
+              <div class="game-grid-icon-wrap">
+                <img src="assets/HoopPong-icon.png" alt="Hoop Pong app icon" class="game-grid-icon">
+              </div>
+              <div class="game-grid-copy">
+                <p class="eyebrow" data-i18n="game_basket_eyebrow">Arcade Sports</p>
+                <h3>Hoop Pong</h3>
+                <p class="short-desc" data-i18n="game_basket_desc">
+                  Bounce, aim, and score in this fast-paced arcade basketball game.
+                </p>
+                <dl class="game-meta-pill-container">
+                  <div class="meta-pill">
+                    <dt data-i18n="meta_status">Status</dt>
+                    <dd data-i18n="meta_live">Live</dd>
+                  </div>
+                  <div class="meta-pill">
+                    <dt data-i18n="meta_platform">Platform</dt>
+                    <dd data-i18n="meta_mobile_web">Mobile / Web</dd>
+                  </div>
+                </dl>
+                <div class="button-row" style="margin-top: auto;">
+                  <div class="button-wrap"><a class="button button-primary" href="play.html?game=hoop-pong" onclick="event.stopPropagation();"><span data-i18n="game_btn_play">Play in Browser</span></a><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="hoop-pong.html" onclick="event.stopPropagation();"><span data-i18n="game_btn_details">Game Details</span></a><div class="button-shadow"></div></div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Game 3: Jump Todo -->
+            <article class="game-grid-card glass-panel is-coming-soon">
+              <div class="game-grid-icon-wrap">
+                <img src="assets/JumpTodo-icon.png" alt="Jump Todo app icon" class="game-grid-icon">
+                <div class="coming-soon-mask">
+                  <span data-i18n="game_btn_coming">Coming Soon</span>
+                </div>
+              </div>
+              <div class="game-grid-copy">
+                <p class="eyebrow" data-i18n="game_genre_arcade">Arcade jumper</p>
+                <h3>Jump Todo</h3>
+                <p class="short-desc" data-i18n="game_jump_desc">
+                  A compact vertical arcade game about timing, coins and upward momentum. Designed
+                  for clean retries and satisfying short runs.
+                </p>
+                <dl class="game-meta-pill-container">
+                  <div class="meta-pill">
+                    <dt data-i18n="meta_status">Status</dt>
+                    <dd data-i18n="meta_dev">In Development</dd>
+                  </div>
+                  <div class="meta-pill">
+                    <dt data-i18n="meta_platform">Platform</dt>
+                    <dd data-i18n="meta_mobile_web">Mobile / Web</dd>
+                  </div>
+                </dl>
+                <div class="button-row" style="margin-top: auto;">
+                  <div class="button-wrap"><button class="button button-primary" disabled style="opacity: 0.5; cursor: not-allowed; pointer-events: none;"><span data-i18n="game_btn_coming">Coming Soon</span></button><div class="button-shadow"></div></div>
+                  <div class="button-wrap"><a class="button button-secondary" href="jumptodo.html" onclick="event.stopPropagation();"><span data-i18n="game_btn_details">Game Details</span></a><div class="button-shadow"></div></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-shell footer-shell">
+        <p>&copy; <span data-year>2026</span> <span class="notranslate" translate="no">Twoday Studio</span></p>
+        <nav aria-label="Footer navigation">
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="analytics.html" data-i18n="footer_stats">Live Stats</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+    <script src="tds-analytics.js" defer></script>
+  </body>
+</html>
+
+
+
+

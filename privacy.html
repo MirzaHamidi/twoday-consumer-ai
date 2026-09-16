@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Privacy policy for Twoday Studio.">
+    <meta name="theme-color" content="#0d0f13">
+    <link rel="icon" type="image/png" href="assets/twodaysENT_Logo-white.png">
+    <link rel="apple-touch-icon" href="assets/twodaysENT_Logo-white.png">
+    <link rel="stylesheet" href="styles.css?v=10">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q303JMY4XC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q303JMY4XC');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+                <header class="site-header" data-header>
+      <div class="section-shell nav-shell">
+        <a class="brand" href="/" aria-label="Twoday Studio home">
+          <img src="assets/twodaysENT_Logo-white.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-light" />
+          <img src="assets/mascotwht.png" alt="Twoday Studio Mascot" class="brand-mascot brand-mascot-dark" />
+          <span class="brand-text"><span class="notranslate" translate="no">TWODAY STUDIO</span></span>
+        </a>
+
+        <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+          <div class="nav-indicator" aria-hidden="true"></div>
+          <a href="play.html" style="color: var(--mint);" data-i18n="nav_play">Play</a>
+          <a href="games.html" data-i18n="nav_games">Games</a>
+          <a href="/#about" data-i18n="nav_about">About</a>
+          <a href="/#vision" data-i18n="nav_vision">Vision</a>
+          <a href="press.html" data-i18n="nav_press">Press</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+
+        <div class="header-controls">
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-dropdown-toggle" id="lang-dropdown-toggle" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Language">
+              <span id="lang-dropdown-label">🇺🇸 EN</span>
+              <span class="lang-dropdown-chevron" aria-hidden="true">&#9660;</span>
+            </button>
+            <div class="lang-dropdown-menu" role="listbox" id="lang-dropdown-menu">
+              <button data-lang="en" class="is-selected">🇺🇸 EN - English</button>
+              <button data-lang="tr">🇹🇷 TR - Türkçe</button>
+              <button data-lang="ar">🇪🇬 AR - عربي</button>
+              <button data-lang="zh">🇨🇳 ZH - 中文</button>
+            </div>
+          </div>
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+            <option value="ar">🇪🇬 AR</option>
+            <option value="zh">🇨🇳 ZH</option>
+          </select>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light theme">
+            <span>🌓</span>
+          </button>
+          
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="page-hero" aria-labelledby="privacy-title">
+        <div class="section-shell narrow-shell">
+          <p class="eyebrow">Last updated: August 18, 2026</p>
+          <h1 id="privacy-title">Privacy Policy</h1>
+          <p>
+            This page explains what the <span class="notranslate" translate="no">TwoDay Studio</span> website currently does with technical and contact information.
+          </p>
+        </div>
+      </section>
+
+      <section class="section policy-section">
+        <div class="section-shell narrow-shell policy-content">
+          <h2>Website Analytics</h2>
+          <p>
+            The site loads Google Analytics 4 (GA4). GA4 receives page and interaction information through Google's analytics script and may use its own cookies or browser identifiers.
+          </p>
+          <p>
+            The site also sends analytics events to a <span class="notranslate" translate="no">TwoDay Studio</span> endpoint hosted on Cloudflare Workers. These events include a randomly generated browser visitor ID, unique site visits, game identifiers, game launches and active session duration. When configured, the Worker also forwards game-session events to GA4.
+          </p>
+
+          <h2>Device Deduplication</h2>
+          <p>
+            The Cloudflare Worker reads the IP address and user-agent provided with a request, combines them and creates a SHA-256 hash. The application stores that hash in Cloudflare D1 to reduce duplicate visitor and play counts. The application code does not store the raw IP address or raw user-agent in D1, although Cloudflare processes request information to provide the Worker service.
+          </p>
+
+          <h2>Browser Storage and Cookies</h2>
+          <p>
+            The site uses browser storage for these purposes:
+          </p>
+          <ul>
+            <li><code>tds_vid</code>, <code>tds_visited</code> and <code>tds_plays</code> support persistent analytics identification and deduplication.</li>
+            <li><code>twoday-theme</code> and <code>twoday-lang</code> remember display preferences.</li>
+            <li>The browser game can use IndexedDB for local game files or save data.</li>
+            <li>Google Translate uses the <code>googtrans</code> cookie when a visitor selects a language.</li>
+            <li>Google Analytics may set analytics cookies when its script runs.</li>
+          </ul>
+          <p>
+            The website code does not use <code>sessionStorage</code>.
+          </p>
+
+          <h2>Translation and Country Lookup</h2>
+          <p>
+            Google Translate is loaded on supported pages when translation controls are available. On a first visit without a saved language preference, the site requests a country code from GeoJS to choose a default language. GeoJS receives the network information needed to answer that request, including the visitor's IP address.
+          </p>
+
+          <h2>Public Live Stats</h2>
+          <p>
+            The Live Stats page displays aggregate totals returned by the Cloudflare Worker, such as visitor counts, game launches, total active playtime and streak summaries. It does not display individual visitor IDs or individual device hashes.
+          </p>
+
+          <h2>Contact and Support</h2>
+          <p>
+            The current business and support forms do not submit to a <span class="notranslate" translate="no">TwoDay Studio</span> web database. They prepare a message and open the visitor's email application. Information is sent only after the visitor sends that email. The message can include a name, email address, company, topic, game, device and message text.
+          </p>
+
+          <h2>Data Retention and Choices</h2>
+          <p>
+            The repository does not define an automatic deletion schedule for analytics records in Cloudflare D1. Visitors can clear site storage and cookies through their browser, block analytics scripts with browser controls or contact <span class="notranslate" translate="no">TwoDay Studio</span> with a privacy question. Clearing local browser storage does not remove records already stored by analytics providers.
+          </p>
+
+          <h2>Third-Party Services</h2>
+          <p>
+            The site currently integrates Google Analytics, Google Translate, GeoJS, Cloudflare Workers and Cloudflare D1. Links to LinkedIn and other external platforms are governed by those services' own privacy practices.
+          </p>
+
+          <h2>Contact</h2>
+          <p>
+            For privacy questions, email <a class="email-link" href="mailto:contact@twodaystudio.com">contact@twodaystudio.com</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-shell footer-shell">
+        <p>&copy; <span data-year>2026</span> <span class="notranslate" translate="no">Twoday Studio</span></p>
+        <nav aria-label="Footer navigation">
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="analytics.html" data-i18n="footer_stats">Live Stats</a>
+          <a href="/#contact" data-i18n="nav_contact">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  <script src="tds-analytics.js" defer></script>
+  </body>
+</html>
+
+
+

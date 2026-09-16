@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+node_modules
+cloudflare-analytics
+cloudflare-ai
+docs
+*.zip
+*.import
+README.md
+test*.js
+fix_*.js
+wrap_*.js
+revert_*.js
