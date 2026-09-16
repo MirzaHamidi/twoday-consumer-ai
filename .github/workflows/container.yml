@@ -31,4 +31,4 @@ jobs:
           context: .
           file: Dockerfile.consumer-ai
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/twoday-consumer-ai:latest
+          tags: ghcr.io/mirzahamidi/twoday-consumer-ai:latest
