@@ -7,6 +7,7 @@ on:
       - 'Dockerfile.consumer-ai'
       - 'consumer-ai-server.mjs'
       - 'consumer-ai.js'
+      - 'consumer-ai-server.mjs'
       - 'index.html'
       - 'styles.css'
       - '.github/workflows/container.yml'
