@@ -32,7 +32,7 @@ async function handleAi(request, response, cors) {
     let payload = await upstream.json();
     if (!upstream.ok) return finish(response, 502, JSON.stringify({ error: 'AI provider request failed.' }), { ...cors, 'Content-Type': 'application/json' });
     let answer = payload.choices?.[0]?.message?.content;
-    if (typeof answer === 'string' && /^(?:user safety:\s*safe\s*response safety:\s*safe|i can't perform live web searches|i don't have real-time .*access)/i.test(answer.trim()) && model === 'openrouter/free') {
+    if (typeof answer === 'string' && /^(?:user safety:\s*safe\s*response safety:\s*safe|i can't perform live web searches|i (?:don't|cannot|can't) (?:provide|perform|access) (?:real-time|live).*)/i.test(answer.trim()) && model === 'openrouter/free') {
       upstream = await requestUpstream(fallbackModel);
       payload = await upstream.json();
       if (!upstream.ok) return finish(response, 502, JSON.stringify({ error: 'AI fallback request failed.' }), { ...cors, 'Content-Type': 'application/json' });
