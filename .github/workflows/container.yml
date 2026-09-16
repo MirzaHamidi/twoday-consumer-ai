@@ -1,0 +1,34 @@
+name: Build consumer AI container
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'Dockerfile.consumer-ai'
+      - 'consumer-ai-server.mjs'
+      - 'consumer-ai.js'
+      - 'index.html'
+      - 'styles.css'
+      - '.github/workflows/container.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.consumer-ai
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/twoday-consumer-ai:latest
