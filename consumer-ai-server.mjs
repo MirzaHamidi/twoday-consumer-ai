@@ -119,7 +119,6 @@ async function verifyTurnstile(request, body) {
 
 async function antiSpamDecision(request, body, scope) {
   if (body.website) return { status: 400, error: 'Spam check failed.' };
-  if (body.notBot !== true) return { status: 400, error: 'Please confirm you are not a robot.' };
   if (!(await verifyTurnstile(request, body))) return { status: 403, error: 'Security verification failed. Please complete the challenge and try again.' };
   const ip = (request.headers.get('x-forwarded-for') || request.socket.remoteAddress || 'unknown').split(',')[0].trim();
   const email = String(body.email || '').trim().toLowerCase();

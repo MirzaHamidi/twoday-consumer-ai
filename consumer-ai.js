@@ -5,7 +5,7 @@
     root.className = 'consumer-ai';
     root.dataset.consumerAi = '';
     root.setAttribute('aria-label', 'ToDo Assistant');
-    root.innerHTML = `<button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open ToDo Assistant"><img src="assets/mascotwht.png" alt="Toto, ToDo Assistant"></button><section class="consumer-ai-panel" id="consumer-ai-panel" hidden><header class="consumer-ai-header"><div><p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p><h2 data-ai-label="title">ToDo Assistant</h2></div><button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button></header><div class="consumer-ai-messages" data-ai-messages aria-live="polite"><p class="consumer-ai-message is-assistant" data-ai-welcome>Ask about our games, studio, or publishing.</p></div><form class="consumer-ai-form" data-ai-form><label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label><textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask ToDo Assistant..."></textarea><div class="turnstile-slot" data-ai-turnstile aria-label="Security verification"></div><div class="consumer-ai-actions"><button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Toggle web search">⌕ <span data-ai-label="search">Web search</span></button><button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button></div></form></section>`;
+    root.innerHTML = `<button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open ToDo Assistant"><img src="assets/mascotwht.png" alt="Toto, ToDo Assistant"></button><section class="consumer-ai-panel" id="consumer-ai-panel" hidden><header class="consumer-ai-header"><div><p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p><h2 data-ai-label="title">ToDo Assistant</h2></div><button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button></header><div class="consumer-ai-messages" data-ai-messages aria-live="polite"><p class="consumer-ai-message is-assistant" data-ai-welcome>Ask about our games, studio, or publishing.</p></div><form class="consumer-ai-form" data-ai-form><label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label><textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask ToDo Assistant..."></textarea><div class="consumer-ai-actions"><button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Toggle web search">⌕ <span data-ai-label="search">Web search</span></button><button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button></div></form></section>`;
     document.body.appendChild(root);
   }
 
@@ -18,21 +18,10 @@
   const input = root.querySelector('[data-ai-input]');
   const messages = root.querySelector('[data-ai-messages]');
   const searchButton = root.querySelector('[data-ai-search]');
-  const aiTurnstileSlot = root.querySelector('[data-ai-turnstile]');
-  const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || ({ 'twodaystudio.com': '0x4AAAAAAE7A_7JtZWat98Co', 'www.twodaystudio.com': '0x4AAAAAAE7BEUnDP7tuy_4V' })[window.location.hostname] || '';
-  let turnstileReady;
   let webSearch = false;
   let history = [];
   let ticketFlow = null;
 
-  async function renderAiTurnstile() {
-    if (!turnstileSiteKey || !aiTurnstileSlot || aiTurnstileSlot.dataset.widgetId) return;
-    if (!window.turnstile) {
-      turnstileReady ||= new Promise((resolve) => { const script = document.createElement('script'); script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; script.async = true; script.onload = () => resolve(window.turnstile || null); script.onerror = () => resolve(null); document.head.appendChild(script); });
-      await turnstileReady;
-    }
-    if (window.turnstile) aiTurnstileSlot.dataset.widgetId = String(window.turnstile.render(aiTurnstileSlot, { sitekey: turnstileSiteKey, callback: (token) => { aiTurnstileSlot.dataset.token = token; }, 'expired-callback': () => { delete aiTurnstileSlot.dataset.token; }, 'error-callback': () => { delete aiTurnstileSlot.dataset.token; } }));
-  }
 
   const copy = {
     en: { eyebrow: 'Twoday Studio', title: 'ToDo Assistant', welcome: 'Ask about our games, studio, or publishing.', inputLabel: 'Message', placeholder: 'Ask ToDo Assistant...', search: 'Web search', send: 'Send', thinking: 'Thinking…', error: 'The AI is unavailable right now. Please try again.' },
@@ -74,30 +63,23 @@
     throw lastError || new Error('AI request failed');
   }
 
-  const ticketEndpoints = ['https://ai.twodaystudio.com/api/tickets', 'https://mc-wvgsibkmje.bunny.run/api/tickets'];
   function ticketText(language, key) {
     const prompts = {
-      en: { email: 'Please provide your email address.', game: 'Which area is affected? Choose One Two Dice, Hoop Pong, or Website.', issue: 'What is the issue? You can describe it freely, or say bug report, gameplay question, account or purchase, or feedback.', device: 'Which device or platform are you using? You can say Android, iPhone, browser, or skip.', details: 'Please add any extra details that could help us investigate.', done: 'Your support ticket was sent to TwoDay Studio. We will get back to you by email.' },
-      tr: { email: 'Lütfen e-posta adresinizi yazın.', game: 'Sorun hangi bölümle ilgili? One Two Dice, Hoop Pong veya Website yazabilirsiniz.', issue: 'Sorun nedir? Özgürce anlatabilir veya bug, oynanış sorusu, hesap/satın alma ya da geri bildirim diyebilirsiniz.', device: 'Hangi cihaz veya platformu kullanıyorsunuz? Android, iPhone, tarayıcı yazabilir ya da geçebilirsiniz.', details: 'İncelememize yardımcı olacak başka ayrıntı var mı?', done: 'Destek talebiniz TwoDay Studio’ya gönderildi. Size e-posta ile dönüş yapacağız.' },
-      ar: { email: 'من فضلك اكتب بريدك الإلكتروني.', game: 'ما الجزء المتأثر؟ اختر One Two Dice أو Hoop Pong أو الموقع.', issue: 'ما المشكلة؟ يمكنك وصفها بحرية أو اختيار بلاغ خطأ أو سؤال عن اللعب أو الحساب والشراء أو ملاحظات.', device: 'ما الجهاز أو المنصة التي تستخدمها؟ اكتب Android أو iPhone أو المتصفح، أو اكتب تخطي.', details: 'هل تريد إضافة أي تفاصيل أخرى تساعدنا في التحقيق؟', done: 'تم إرسال تذكرة الدعم إلى TwoDay Studio. سنرد عليك عبر البريد الإلكتروني.' },
-      zh: { email: '请提供您的电子邮箱。', game: '问题涉及哪一部分？请选择 One Two Dice、Hoop Pong 或网站。', issue: '问题是什么？可以自由描述，也可以说错误报告、玩法问题、账户或购买、反馈。', device: '您使用什么设备或平台？可以说 Android、iPhone、浏览器，或输入跳过。', details: '还有其他有助于我们调查的细节吗？', done: '您的支持工单已发送给 TwoDay Studio，我们会通过邮件回复。' }
+      en: { email: 'Please provide your email address.', game: 'Which area is affected? Choose One Two Dice, Hoop Pong, or Website.', issue: 'What is the issue? You can describe it freely, or say bug report, gameplay question, account or purchase, or feedback.', device: 'Which device or platform are you using? You can say Android, iPhone, browser, or skip.', details: 'Please add any extra details that could help us investigate.', done: 'I filled in the support form for you. Complete the security check and press Send Ticket.' },
+      tr: { email: 'Lütfen e-posta adresinizi yazın.', game: 'Sorun hangi bölümle ilgili? One Two Dice, Hoop Pong veya Website yazabilirsiniz.', issue: 'Sorun nedir? Özgürce anlatabilir veya bug, oynanış sorusu, hesap/satın alma ya da geri bildirim diyebilirsiniz.', device: 'Hangi cihaz veya platformu kullanıyorsunuz? Android, iPhone, tarayıcı yazabilir ya da geçebilirsiniz.', details: 'İncelememize yardımcı olacak başka ayrıntı var mı?', done: 'Destek formunu sizin için doldurdum. Güvenlik doğrulamasını tamamlayıp Send Ticket’a basın.' },
+      ar: { email: 'من فضلك اكتب بريدك الإلكتروني.', game: 'ما الجزء المتأثر؟ اختر One Two Dice أو Hoop Pong أو الموقع.', issue: 'ما المشكلة؟ يمكنك وصفها بحرية أو اختيار بلاغ خطأ أو سؤال عن اللعب أو الحساب والشراء أو ملاحظات.', device: 'ما الجهاز أو المنصة التي تستخدمها؟ اكتب Android أو iPhone أو المتصفح، أو اكتب تخطي.', details: 'هل تريد إضافة أي تفاصيل أخرى تساعدنا في التحقيق؟', done: 'ملأت نموذج الدعم من أجلك. أكمل التحقق الأمني واضغط إرسال التذكرة.' },
+      zh: { email: '请提供您的电子邮箱。', game: '问题涉及哪一部分？请选择 One Two Dice、Hoop Pong 或网站。', issue: '问题是什么？可以自由描述，也可以说错误报告、玩法问题、账户或购买、反馈。', device: '您使用什么设备或平台？可以说 Android、iPhone、浏览器，或输入跳过。', details: '还有其他有助于我们调查的细节吗？', done: '我已为您填写支持表单。完成安全验证后，请点击发送工单。' }
     };
     return (prompts[language] || prompts.en)[key];
   }
-  async function submitTicketFlow() {
-    await renderAiTurnstile();
-    const payload = { email: ticketFlow.email, game: ticketFlow.game, issue: ticketFlow.issue, device: ticketFlow.device, message: ticketFlow.details, website: '', notBot: true, turnstileToken: aiTurnstileSlot?.dataset.token || '' };
-    if (turnstileSiteKey && !payload.turnstileToken) { addMessage(ticketFlow.language === 'tr' ? 'Lütfen güvenlik doğrulamasını tamamlayın, sonra ayrıntıyı tekrar gönderin.' : 'Please complete the security verification, then send the details again.', 'assistant'); return; }
-    let lastError;
-    for (const url of ticketEndpoints) {
-      try {
-        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        const data = await response.json();
-        if (response.ok) return data;
-        lastError = new Error(data.error || `Ticket request failed (${response.status})`);
-      } catch (error) { lastError = error; }
-    }
-    throw lastError || new Error('Ticket request failed');
+  function prepareTicketForm() {
+    const support = document.querySelector('[data-form-type="support"]');
+    if (!support) return false;
+    const fields = { email: ticketFlow.email, game: ticketFlow.game, issue: ticketFlow.issue, device: ticketFlow.device, message: ticketFlow.details };
+    Object.entries(fields).forEach(([name, value]) => { const field = support.elements.namedItem(name); if (field) field.value = value; });
+    support.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    support.querySelector('[data-turnstile]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return true;
   }
   async function continueTicketFlow(text) {
     const lang = ticketFlow.language;
@@ -114,7 +96,7 @@
     if (ticketFlow.stage === 'issue') { ticketFlow.issue = value.slice(0, 100); ticketFlow.stage = 'device'; addMessage(ticketText(lang, 'device'), 'assistant'); return; }
     if (ticketFlow.stage === 'device') { ticketFlow.device = /skip|geç|تخطي|跳过/i.test(value) ? 'Not provided' : value.slice(0, 200); ticketFlow.stage = 'details'; addMessage(ticketText(lang, 'details'), 'assistant'); return; }
     ticketFlow.details = value.slice(0, 4000);
-    try { const result = await submitTicketFlow(); addMessage(ticketText(lang, 'done') + (result.ticketId ? ` (${result.ticketId})` : ''), 'assistant'); ticketFlow = null; }
+    try { prepareTicketForm(); addMessage(ticketText(lang, 'done'), 'assistant'); ticketFlow = null; }
     catch { addMessage(lang === 'tr' ? 'Talep gönderilemedi. Lütfen tekrar deneyin.' : 'The ticket could not be sent. Please try again.', 'assistant'); }
   }
 
@@ -153,5 +135,4 @@
     finally { setBusy(false); input.focus(); }
   });
   setCopy();
-  renderAiTurnstile();
 })();
