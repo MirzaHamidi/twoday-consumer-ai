@@ -109,7 +109,7 @@ async function persistTicket(ticket) {
 
 async function verifyTurnstile(request, body) {
   if (!turnstileRequired) return true;
-  const secret = request.headers.get('origin') === 'https://www.twodaystudio.com' ? turnstileSecretKeyWww : turnstileSecretKey;
+  const secret = request.headers.origin === 'https://www.twodaystudio.com' ? turnstileSecretKeyWww : turnstileSecretKey;
   if (!secret || typeof body.turnstileToken !== 'string' || !body.turnstileToken) return false;
   try {
     const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret, response: body.turnstileToken, remoteip: request.socket.remoteAddress }) });
