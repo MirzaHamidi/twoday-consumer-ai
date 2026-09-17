@@ -108,6 +108,10 @@ const buildMailto = ({ subject, lines }) => {
 
 const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || ({ "twodaystudio.com": "0x4AAAAAAE7A_7JtZWat98Co", "www.twodaystudio.com": "0x4AAAAAAE7BEUnDP7tuy_4V" })[window.location.hostname] || "";
 let turnstileReady;
+const turnstileTheme = () => {
+  const theme = document.documentElement.getAttribute("data-theme");
+  return theme === "light" || theme === "dark" ? theme : "auto";
+};
 const loadTurnstile = () => {
   if (!turnstileSiteKey) return Promise.resolve(null);
   if (window.turnstile) return Promise.resolve(window.turnstile);
@@ -118,8 +122,21 @@ const renderTurnstile = async (form) => {
   const slot = form.querySelector("[data-turnstile]");
   const api = await loadTurnstile();
   if (!slot || !api || slot.dataset.widgetId) return;
-  slot.dataset.widgetId = String(api.render(slot, { sitekey: turnstileSiteKey, callback: (token) => { slot.dataset.token = token; }, "expired-callback": () => { delete slot.dataset.token; }, "error-callback": () => { delete slot.dataset.token; } }));
+  slot.dataset.widgetId = String(api.render(slot, { sitekey: turnstileSiteKey, theme: turnstileTheme(), callback: (token) => { slot.dataset.token = token; }, "expired-callback": () => { delete slot.dataset.token; }, "error-callback": () => { delete slot.dataset.token; } }));
 };
+
+const refreshTurnstileTheme = () => {
+  document.querySelectorAll("[data-turnstile]").forEach((slot) => {
+    const widgetId = slot.dataset.widgetId;
+    if (widgetId && window.turnstile?.remove) window.turnstile.remove(widgetId);
+    delete slot.dataset.widgetId;
+    delete slot.dataset.token;
+    slot.replaceChildren();
+    renderTurnstile(slot.closest("[data-mail-form]"));
+  });
+};
+
+new MutationObserver(() => refreshTurnstileTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
 mailForms.forEach((form) => {
   renderTurnstile(form);

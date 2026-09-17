@@ -39,6 +39,12 @@
   }
 
   function language() { return localStorage.getItem('twoday-lang') || document.documentElement.lang || 'en'; }
+  function sanitizePublicAnswer(value) {
+    const allowed = new Set(['twodaystudio.com', 'www.twodaystudio.com', '2daystudio.com', 'www.2daystudio.com']);
+    return String(value).replace(/https?:\/\/[^\s)]+/gi, (url) => {
+      try { return allowed.has(new URL(url).hostname.toLowerCase()) ? url : ''; } catch { return ''; }
+    }).replace(/\b(?:www\.)?(?!twodaystudio\.com\b|2daystudio\.com\b)[a-z0-9-]+\.(?:com|net|org|io|co|dev|ai|app)(?:\/[^\s)]*)?/gi, '').replace(/[ \t]{2,}/g, ' ').trim();
+  }
   function setCopy() {
     const t = copy[language()] || copy.en;
     root.querySelectorAll('[data-ai-label]').forEach((el) => { const key = el.dataset.aiLabel; if (t[key]) el.textContent = t[key]; });
@@ -74,11 +80,17 @@
   }
   function prepareTicketForm() {
     const support = document.querySelector('[data-form-type="support"]');
-    if (!support) return false;
+    if (!support) {
+      try { sessionStorage.setItem('twoday-ticket-draft', JSON.stringify(ticketFlow)); } catch { /* Storage may be disabled. */ }
+      if (!/\/index\.html?$|\/$/.test(window.location.pathname)) window.location.href = 'index.html#contact';
+      else window.location.hash = 'contact';
+      return false;
+    }
     const fields = { email: ticketFlow.email, game: ticketFlow.game, issue: ticketFlow.issue, device: ticketFlow.device, message: ticketFlow.details };
     Object.entries(fields).forEach(([name, value]) => { const field = support.elements.namedItem(name); if (field) field.value = value; });
     support.scrollIntoView({ behavior: 'smooth', block: 'center' });
     support.querySelector('[data-turnstile]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    try { sessionStorage.removeItem('twoday-ticket-draft'); } catch { /* Storage may be disabled. */ }
     return true;
   }
   async function continueTicketFlow(text) {
@@ -96,7 +108,7 @@
     if (ticketFlow.stage === 'issue') { ticketFlow.issue = value.slice(0, 100); ticketFlow.stage = 'device'; addMessage(ticketText(lang, 'device'), 'assistant'); return; }
     if (ticketFlow.stage === 'device') { ticketFlow.device = /skip|geç|تخطي|跳过/i.test(value) ? 'Not provided' : value.slice(0, 200); ticketFlow.stage = 'details'; addMessage(ticketText(lang, 'details'), 'assistant'); return; }
     ticketFlow.details = value.slice(0, 4000);
-    try { prepareTicketForm(); addMessage(ticketText(lang, 'done'), 'assistant'); ticketFlow = null; }
+    try { if (prepareTicketForm()) addMessage(ticketText(lang, 'done'), 'assistant'); ticketFlow = null; }
     catch { addMessage(lang === 'tr' ? 'Talep gönderilemedi. Lütfen tekrar deneyin.' : 'The ticket could not be sent. Please try again.', 'assistant'); }
   }
 
@@ -121,7 +133,7 @@
     const thinking = addMessage(t.thinking, 'assistant');
     try {
       const data = await requestAnswer({ message: text, history, language: detectLanguage(text), webSearch });
-      thinking.textContent = data.answer;
+      thinking.textContent = sanitizePublicAnswer(data.answer);
       if (data.ticketIntent) {
         ticketFlow = { stage: 'email', language: detectLanguage(text) };
         addMessage(ticketText(ticketFlow.language, 'email'), 'assistant');
@@ -135,4 +147,12 @@
     finally { setBusy(false); input.focus(); }
   });
   setCopy();
+  try {
+    const draft = JSON.parse(sessionStorage.getItem('twoday-ticket-draft') || 'null');
+    if (draft?.email && draft?.game && draft?.issue && draft?.details) {
+      ticketFlow = draft;
+      prepareTicketForm();
+      ticketFlow = null;
+    }
+  } catch { /* Ignore unavailable or invalid draft storage. */ }
 })();
