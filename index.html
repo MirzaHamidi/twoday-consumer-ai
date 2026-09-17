@@ -285,6 +285,7 @@
 
           <div class="contact-grid">
             <form class="form-card" data-mail-form data-form-type="business">
+              <input class="anti-spam-trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
               <div class="form-card-heading">
                 <h3 data-i18n="contact_biz_title">Business Contact</h3>
                 <p data-i18n="contact_biz_desc">For publishers, investors, press, platform teams and collaboration requests.</p>
@@ -319,16 +320,18 @@
                 <textarea name="message" rows="5" required></textarea>
               </label>
 
-              <div class="button-wrap"><button class="button button-primary" type="submit"><span data-i18n="contact_btn_email">Open Email Draft</span></button><div class="button-shadow"></div></div>
+              <label class="anti-spam-check"><input name="notBot" type="checkbox" required><span data-i18n="contact_not_bot">I am not a robot</span></label>
+              <div class="button-wrap"><button class="button button-primary" type="submit"><span data-i18n="contact_btn_email">Send Email</span></button><div class="button-shadow"></div></div>
               <p class="form-note" data-form-status data-i18n="contact_biz_note">
-                This static form opens your email app with the message already filled in.
+                Your message will be sent securely to TwoDay Studio.
               </p>
             </form>
 
             <form class="form-card" data-mail-form data-form-type="support">
+              <input class="anti-spam-trap" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
               <div class="form-card-heading">
                 <h3 data-i18n="contact_help_title">Need Help</h3>
-                <p data-i18n="contact_help_desc">Create a support ticket draft for game issues, bugs or player questions.</p>
+                <p data-i18n="contact_help_desc">Send a secure support ticket for game issues, bugs or player questions.</p>
               </div>
 
               <label>
@@ -341,7 +344,6 @@
                   <option value="" data-i18n="opt_select_game">Select a game</option>
                   <option>One Two Dice</option>
                   <option>Hoop Pong</option>
-                  <option>Jump Todo</option>
                   <option data-i18n="opt_game_web">Website</option>
                   <option data-i18n="opt_other">Other</option>
                 </select>
@@ -366,7 +368,8 @@
                 <textarea name="message" rows="5" required></textarea>
               </label>
 
-              <div class="button-wrap"><button class="button button-secondary" type="submit"><span data-i18n="contact_btn_ticket">Create Ticket Email</span></button><div class="button-shadow"></div></div>
+              <label class="anti-spam-check"><input name="notBot" type="checkbox" required><span data-i18n="contact_not_bot">I am not a robot</span></label>
+              <div class="button-wrap"><button class="button button-secondary" type="submit"><span data-i18n="contact_btn_ticket">Send Ticket</span></button><div class="button-shadow"></div></div>
               <p class="form-note" data-form-status data-i18n="contact_help_note">
                 A ticket ID will be generated in the email subject.
               </p>
@@ -423,9 +426,9 @@
       </section>
     </aside>
 
-    <script src="script.js?v=11" defer></script>
-    <script src="tds-analytics.js?v=11" defer></script>
-    <script src="consumer-ai.js?v=11" defer></script>
+    <script src="script.js?v=13" defer></script>
+    <script src="tds-analytics.js?v=13" defer></script>
+    <script src="consumer-ai.js?v=13" defer></script>
   </body>
 </html>
 

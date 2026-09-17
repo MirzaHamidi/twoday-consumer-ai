@@ -126,6 +126,8 @@ mailForms.forEach((form) => {
         issue: formData.get("issue"),
         device: formData.get("device"),
         message: formData.get("message"),
+        website: formData.get("website"),
+        notBot: formData.get("notBot") === "on",
       };
       try {
         let ticketResponse;
@@ -175,7 +177,7 @@ mailForms.forEach((form) => {
         let contactResponse;
         for (const endpoint of ["https://ai.twodaystudio.com/api/contact", "https://mc-wvgsibkmje.bunny.run/api/contact"]) {
           try {
-            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message") }) });
+            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message"), website: formData.get("website"), notBot: formData.get("notBot") === "on" }) });
             if (contactResponse.ok) break;
           } catch (error) { console.debug("Contact endpoint unavailable.", error); }
         }
@@ -531,16 +533,17 @@ const i18nData = {
     "contact_company": "Company",
     "contact_reason": "Reason",
     "contact_msg": "Message",
-    "contact_btn_email": "Open Email Draft",
-    "contact_biz_note": "This static form opens your email app with the message already filled in.",
+    "contact_btn_email": "Send Email",
+    "contact_biz_note": "Your message will be sent securely to TwoDay Studio.",
     "contact_help_title": "Need Help",
-    "contact_help_desc": "Create a support ticket draft for game issues, bugs or player questions.",
+    "contact_help_desc": "Send a secure support ticket for game issues, bugs or player questions.",
     "contact_help_email": "Your Email",
     "contact_help_game": "Game",
     "contact_help_issue": "Issue Type",
     "contact_help_dev": "Device / Platform",
     "contact_help_details": "Details",
-    "contact_btn_ticket": "Create Ticket Email",
+    "contact_btn_ticket": "Send Ticket",
+    "contact_not_bot": "I am not a robot",
     "contact_help_note": "A ticket ID will be generated in the email subject.",
     "footer_privacy": "Privacy Policy",
     "footer_stats": "Live Stats",

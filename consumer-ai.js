@@ -20,6 +20,7 @@
   const searchButton = root.querySelector('[data-ai-search]');
   let webSearch = false;
   let history = [];
+  let ticketFlow = null;
 
   const copy = {
     en: { eyebrow: 'Twoday Studio', title: 'ToDo Assistant', welcome: 'Ask about our games, studio, or publishing.', inputLabel: 'Message', placeholder: 'Ask ToDo Assistant...', search: 'Web search', send: 'Send', thinking: 'Thinking…', error: 'The AI is unavailable right now. Please try again.' },
@@ -61,6 +62,48 @@
     throw lastError || new Error('AI request failed');
   }
 
+  const ticketEndpoints = ['https://ai.twodaystudio.com/api/tickets', 'https://mc-wvgsibkmje.bunny.run/api/tickets'];
+  function ticketText(language, key) {
+    const prompts = {
+      en: { email: 'Please provide your email address.', game: 'Which area is affected? Choose One Two Dice, Hoop Pong, or Website.', issue: 'What is the issue? You can describe it freely, or say bug report, gameplay question, account or purchase, or feedback.', device: 'Which device or platform are you using? You can say Android, iPhone, browser, or skip.', details: 'Please add any extra details that could help us investigate.', done: 'Your support ticket was sent to TwoDay Studio. We will get back to you by email.' },
+      tr: { email: 'Lütfen e-posta adresinizi yazın.', game: 'Sorun hangi bölümle ilgili? One Two Dice, Hoop Pong veya Website yazabilirsiniz.', issue: 'Sorun nedir? Özgürce anlatabilir veya bug, oynanış sorusu, hesap/satın alma ya da geri bildirim diyebilirsiniz.', device: 'Hangi cihaz veya platformu kullanıyorsunuz? Android, iPhone, tarayıcı yazabilir ya da geçebilirsiniz.', details: 'İncelememize yardımcı olacak başka ayrıntı var mı?', done: 'Destek talebiniz TwoDay Studio’ya gönderildi. Size e-posta ile dönüş yapacağız.' },
+      ar: { email: 'من فضلك اكتب بريدك الإلكتروني.', game: 'ما الجزء المتأثر؟ اختر One Two Dice أو Hoop Pong أو الموقع.', issue: 'ما المشكلة؟ يمكنك وصفها بحرية أو اختيار بلاغ خطأ أو سؤال عن اللعب أو الحساب والشراء أو ملاحظات.', device: 'ما الجهاز أو المنصة التي تستخدمها؟ اكتب Android أو iPhone أو المتصفح، أو اكتب تخطي.', details: 'هل تريد إضافة أي تفاصيل أخرى تساعدنا في التحقيق؟', done: 'تم إرسال تذكرة الدعم إلى TwoDay Studio. سنرد عليك عبر البريد الإلكتروني.' },
+      zh: { email: '请提供您的电子邮箱。', game: '问题涉及哪一部分？请选择 One Two Dice、Hoop Pong 或网站。', issue: '问题是什么？可以自由描述，也可以说错误报告、玩法问题、账户或购买、反馈。', device: '您使用什么设备或平台？可以说 Android、iPhone、浏览器，或输入跳过。', details: '还有其他有助于我们调查的细节吗？', done: '您的支持工单已发送给 TwoDay Studio，我们会通过邮件回复。' }
+    };
+    return (prompts[language] || prompts.en)[key];
+  }
+  async function submitTicketFlow() {
+    const payload = { email: ticketFlow.email, game: ticketFlow.game, issue: ticketFlow.issue, device: ticketFlow.device, message: ticketFlow.details, website: '', notBot: true };
+    let lastError;
+    for (const url of ticketEndpoints) {
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await response.json();
+        if (response.ok) return data;
+        lastError = new Error(data.error || `Ticket request failed (${response.status})`);
+      } catch (error) { lastError = error; }
+    }
+    throw lastError || new Error('Ticket request failed');
+  }
+  async function continueTicketFlow(text) {
+    const lang = ticketFlow.language;
+    const value = text.trim();
+    if (ticketFlow.stage === 'email') {
+      if (!/^\S+@\S+\.\S+$/.test(value)) { addMessage(ticketText(lang, 'email'), 'assistant'); return; }
+      ticketFlow.email = value; ticketFlow.stage = 'game'; addMessage(ticketText(lang, 'game'), 'assistant'); return;
+    }
+    if (ticketFlow.stage === 'game') {
+      const normalized = value.toLowerCase();
+      ticketFlow.game = /one\s*two|dice|zar/i.test(normalized) ? 'One Two Dice' : /hoop|pong/i.test(normalized) ? 'Hoop Pong' : 'Website';
+      ticketFlow.stage = 'issue'; addMessage(ticketText(lang, 'issue'), 'assistant'); return;
+    }
+    if (ticketFlow.stage === 'issue') { ticketFlow.issue = value.slice(0, 100); ticketFlow.stage = 'device'; addMessage(ticketText(lang, 'device'), 'assistant'); return; }
+    if (ticketFlow.stage === 'device') { ticketFlow.device = /skip|geç|تخطي|跳过/i.test(value) ? 'Not provided' : value.slice(0, 200); ticketFlow.stage = 'details'; addMessage(ticketText(lang, 'details'), 'assistant'); return; }
+    ticketFlow.details = value.slice(0, 4000);
+    try { const result = await submitTicketFlow(); addMessage(ticketText(lang, 'done') + (result.ticketId ? ` (${result.ticketId})` : ''), 'assistant'); ticketFlow = null; }
+    catch { addMessage(lang === 'tr' ? 'Talep gönderilemedi. Lütfen tekrar deneyin.' : 'The ticket could not be sent. Please try again.', 'assistant'); }
+  }
+
   launcher.addEventListener('click', () => toggle(panel.hidden));
   root.querySelector('.consumer-ai-close').addEventListener('click', () => toggle(false));
   searchButton.addEventListener('click', () => { webSearch = !webSearch; searchButton.setAttribute('aria-pressed', String(webSearch)); searchButton.dataset.enabled = String(webSearch); searchButton.classList.toggle('is-active', webSearch); });
@@ -76,6 +119,7 @@
     event.preventDefault();
     const text = input.value.trim();
     if (!text) return;
+    if (ticketFlow) { addMessage(text, 'user'); input.value = ''; await continueTicketFlow(text); return; }
     const t = copy[language()] || copy.en;
     addMessage(text, 'user'); input.value = ''; setBusy(true);
     const thinking = addMessage(t.thinking, 'assistant');
@@ -83,6 +127,8 @@
       const data = await requestAnswer({ message: text, history, language: detectLanguage(text), webSearch });
       thinking.textContent = data.answer;
       if (data.ticketIntent) {
+        ticketFlow = { stage: 'email', language: detectLanguage(text) };
+        addMessage(ticketText(ticketFlow.language, 'email'), 'assistant');
         const ticket = document.createElement('button');
         ticket.type = 'button'; ticket.className = 'consumer-ai-ticket'; ticket.textContent = language() === 'tr' ? 'Destek formunu aç' : language() === 'ar' ? 'فتح نموذج الدعم' : language() === 'zh' ? '打开支持表单' : 'Open support form';
         ticket.addEventListener('click', () => document.querySelector('[data-form-type="support"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));

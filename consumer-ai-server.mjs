@@ -14,6 +14,7 @@ const supportWebhookUrl = process.env.SUPPORT_WEBHOOK_URL || '';
 const contactEmail = process.env.CONTACT_EMAIL || 'contact@twodaystudio.com';
 const emailApiKey = process.env.RESEND_API_KEY || '';
 const emailFrom = process.env.EMAIL_FROM || 'TwoDay Studio <onboarding@resend.dev>';
+const requestCounts = new Map();
 const allowedOrigins = new Set(['https://2daystudio.com', 'https://www.2daystudio.com', 'https://twodaystudio.com', 'https://www.twodaystudio.com']);
 
 createServer(async (request, response) => {
@@ -103,9 +104,24 @@ async function persistTicket(ticket) {
   }
 }
 
+function antiSpamDecision(request, body, scope) {
+  if (body.website) return { status: 400, error: 'Spam check failed.' };
+  if (body.notBot !== true) return { status: 400, error: 'Please confirm you are not a robot.' };
+  const ip = (request.headers.get('x-forwarded-for') || request.socket.remoteAddress || 'unknown').split(',')[0].trim();
+  const email = String(body.email || '').trim().toLowerCase();
+  const key = `${scope}:${ip}:${email}`;
+  const now = Date.now();
+  const recent = (requestCounts.get(key) || []).filter((timestamp) => now - timestamp < 60 * 60 * 1000);
+  if (recent.length >= 3) return { status: 429, error: 'Too many requests. Please try again later.', retryAfter: '3600' };
+  requestCounts.set(key, [...recent, now]);
+  return { status: 0 };
+}
+
 async function handleTicket(request, response, cors) {
   try {
     const body = await readJson(request);
+    const spam = antiSpamDecision(request, body, 'ticket');
+    if (spam.status) return finish(response, spam.status, JSON.stringify({ error: spam.error }), { ...cors, 'Content-Type': 'application/json', ...(spam.retryAfter ? { 'Retry-After': spam.retryAfter } : {}) });
     const ticket = { id: `TS-${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`, createdAt: new Date().toISOString(), email: String(body.email || '').trim().slice(0, 200), game: String(body.game || 'Website').trim().slice(0, 100), issue: String(body.issue || 'Other').trim().slice(0, 100), device: String(body.device || '').trim().slice(0, 200), message: String(body.message || '').trim().slice(0, 4000) };
     if (!ticket.email || !/^\S+@\S+\.\S+$/.test(ticket.email) || !ticket.message) return finish(response, 400, JSON.stringify({ error: 'Email and message are required.' }), { ...cors, 'Content-Type': 'application/json' });
     await persistTicket(ticket);
@@ -125,6 +141,8 @@ async function handleTicket(request, response, cors) {
 async function handleContact(request, response, cors) {
   try {
     const body = await readJson(request);
+    const spam = antiSpamDecision(request, body, 'contact');
+    if (spam.status) return finish(response, spam.status, JSON.stringify({ error: spam.error }), { ...cors, 'Content-Type': 'application/json', ...(spam.retryAfter ? { 'Retry-After': spam.retryAfter } : {}) });
     const contact = {
       name: String(body.name || '').trim().slice(0, 200), email: String(body.email || '').trim().slice(0, 200), company: String(body.company || 'Not provided').trim().slice(0, 200), reason: String(body.reason || 'Other').trim().slice(0, 100), message: String(body.message || '').trim().slice(0, 5000)
     };
