@@ -1,6 +1,13 @@
 (function () {
-  const root = document.querySelector('[data-consumer-ai]');
-  if (!root) return;
+  let root = document.querySelector('[data-consumer-ai]');
+  if (!root) {
+    root = document.createElement('aside');
+    root.className = 'consumer-ai';
+    root.dataset.consumerAi = '';
+    root.setAttribute('aria-label', 'ToDo Assistant');
+    root.innerHTML = `<button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open ToDo Assistant"><img src="assets/mascotwht.png" alt="Toto, ToDo Assistant"></button><section class="consumer-ai-panel" id="consumer-ai-panel" hidden><header class="consumer-ai-header"><div><p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p><h2 data-ai-label="title">ToDo Assistant</h2></div><button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button></header><div class="consumer-ai-messages" data-ai-messages aria-live="polite"><p class="consumer-ai-message is-assistant" data-ai-welcome>Ask about our games, studio, or publishing.</p></div><form class="consumer-ai-form" data-ai-form><label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label><textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask ToDo Assistant..."></textarea><div class="consumer-ai-actions"><button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Toggle web search">⌕ <span data-ai-label="search">Web search</span></button><button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button></div></form></section>`;
+    document.body.appendChild(root);
+  }
 
   // The AI service is a separate Bunny container; keep this overridable for staging.
   const endpoint = window.TWODAY_AI_ENDPOINT || 'https://ai.twodaystudio.com/api/ai/chat';
