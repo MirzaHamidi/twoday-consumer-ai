@@ -82,6 +82,12 @@
     try {
       const data = await requestAnswer({ message: text, history, language: detectLanguage(text), webSearch });
       thinking.textContent = data.answer;
+      if (data.ticketIntent) {
+        const ticket = document.createElement('button');
+        ticket.type = 'button'; ticket.className = 'consumer-ai-ticket'; ticket.textContent = language() === 'tr' ? 'Destek formunu aç' : language() === 'ar' ? 'فتح نموذج الدعم' : language() === 'zh' ? '打开支持表单' : 'Open support form';
+        ticket.addEventListener('click', () => document.querySelector('[data-form-type="support"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+        messages.appendChild(ticket);
+      }
       history = [...history, { role: 'user', content: text }, { role: 'assistant', content: data.answer }].slice(-12);
     } catch (error) { thinking.textContent = t.error; console.error(error); }
     finally { setBusy(false); input.focus(); }
