@@ -4,6 +4,7 @@
 
   // The AI service is a separate Bunny container; keep this overridable for staging.
   const endpoint = window.TWODAY_AI_ENDPOINT || 'https://ai.twodaystudio.com/api/ai/chat';
+  const fallbackEndpoint = 'https://mc-wvgsibkmje.bunny.run/api/ai/chat';
   const launcher = root.querySelector('[data-ai-toggle]');
   const panel = root.querySelector('#consumer-ai-panel');
   const form = root.querySelector('[data-ai-form]');
@@ -39,6 +40,19 @@
   function toggle(open) { panel.hidden = !open; panel.setAttribute('aria-hidden', String(!open)); launcher.setAttribute('aria-expanded', String(open)); if (open) input.focus(); }
   function addMessage(text, role) { const item = document.createElement('p'); item.className = `consumer-ai-message is-${role}`; item.textContent = text; messages.appendChild(item); messages.scrollTop = messages.scrollHeight; return item; }
   function setBusy(busy) { form.querySelector('[type="submit"]').disabled = busy; input.disabled = busy; }
+  async function requestAnswer(payload) {
+    const endpoints = endpoint === fallbackEndpoint ? [endpoint] : [endpoint, fallbackEndpoint];
+    let lastError;
+    for (const url of endpoints) {
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await response.json();
+        if (response.ok && data.answer) return data;
+        lastError = new Error(data.error || `AI request failed (${response.status})`);
+      } catch (error) { lastError = error; }
+    }
+    throw lastError || new Error('AI request failed');
+  }
 
   launcher.addEventListener('click', () => toggle(panel.hidden));
   root.querySelector('.consumer-ai-close').addEventListener('click', () => toggle(false));
@@ -59,9 +73,7 @@
     addMessage(text, 'user'); input.value = ''; setBusy(true);
     const thinking = addMessage(t.thinking, 'assistant');
     try {
-      const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, history, language: detectLanguage(text), webSearch }) });
-      const data = await response.json();
-      if (!response.ok || !data.answer) throw new Error(data.error || 'AI request failed');
+      const data = await requestAnswer({ message: text, history, language: detectLanguage(text), webSearch });
       thinking.textContent = data.answer;
       history = [...history, { role: 'user', content: text }, { role: 'assistant', content: data.answer }].slice(-12);
     } catch (error) { thinking.textContent = t.error; console.error(error); }
