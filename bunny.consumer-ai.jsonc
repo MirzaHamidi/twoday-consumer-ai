@@ -10,8 +10,9 @@
         "dockerfile": "Dockerfile.consumer-ai",
         "port": 3000,
         "env": {
-          "OPENROUTER_API_KEY": "OPENROUTER_API_KEY",
-          "OPENROUTER_CONSUMER_MODEL": "OPENROUTER_CONSUMER_MODEL",
+          "LOCAL_AI_BASE_URL": "LOCAL_AI_BASE_URL",
+          "LOCAL_AI_API_KEY": "LOCAL_AI_API_KEY",
+          "LOCAL_AI_MODEL": "LOCAL_AI_MODEL",
           "PORT": "PORT"
         }
       }

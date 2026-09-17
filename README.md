@@ -53,7 +53,7 @@ Then visit `http://localhost:8080`.
 - Replace `assets/press-kit-placeholder.txt` with a real press kit zip or PDF.
 - Update the social links in `index.html` once profiles are live.
 - Business and support forms currently use `mailto:` links so the site can stay static on GitHub Pages.
-- The consumer AI must use a server-side proxy or worker; never expose an OpenRouter key in browser JavaScript.
+- The consumer AI must use a server-side proxy or worker; never expose the local AI key in browser JavaScript.
 - `Dockerfile.consumer-ai` and `bunny.consumer-ai.jsonc` provide the Bunny Magic Container version. The container serves the static site and `/api/ai/chat` from the same origin, so the website works without a separate API URL.
 - For real server-side submissions or a ticket inbox, connect a form service such as Netlify Forms or Formspree later.
 - Review `privacy.html` before publishing any game or feature that collects player data.
