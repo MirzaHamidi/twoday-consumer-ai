@@ -171,6 +171,22 @@ mailForms.forEach((form) => {
       const reason = formData.get("reason");
       const company = formData.get("company") || "Not provided";
 
+      try {
+        let contactResponse;
+        for (const endpoint of ["https://ai.twodaystudio.com/api/contact", "https://mc-wvgsibkmje.bunny.run/api/contact"]) {
+          try {
+            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message") }) });
+            if (contactResponse.ok) break;
+          } catch (error) { console.debug("Contact endpoint unavailable.", error); }
+        }
+        if (!contactResponse?.ok) throw new Error("Contact delivery is not configured");
+        if (status) status.textContent = "Your message was sent to TwoDay Studio.";
+        form.reset();
+        return;
+      } catch (error) {
+        console.warn("Contact API unavailable; opening email fallback.", error);
+      }
+
       mailto = buildMailto({
         subject: `Business Inquiry - ${reason}`,
         lines: [

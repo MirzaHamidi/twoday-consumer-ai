@@ -11,6 +11,9 @@ const localAiKey = process.env.LOCAL_AI_API_KEY || '';
 const model = process.env.LOCAL_AI_MODEL || 'default';
 const dataDir = resolve(process.env.DATA_DIR || join(root, 'data'));
 const supportWebhookUrl = process.env.SUPPORT_WEBHOOK_URL || '';
+const contactEmail = process.env.CONTACT_EMAIL || 'contact@twodaystudio.com';
+const emailApiKey = process.env.RESEND_API_KEY || '';
+const emailFrom = process.env.EMAIL_FROM || 'TwoDay Studio <onboarding@resend.dev>';
 const allowedOrigins = new Set(['https://2daystudio.com', 'https://www.2daystudio.com', 'https://twodaystudio.com', 'https://www.twodaystudio.com']);
 
 createServer(async (request, response) => {
@@ -20,6 +23,7 @@ createServer(async (request, response) => {
   if (request.method === 'GET' && (request.url === '/healthz' || request.url === '/readyz')) return finish(response, 200, JSON.stringify({ ok: true, service: 'twoday-consumer-ai', model }), { 'Content-Type': 'application/json' });
   if (request.method === 'POST' && new URL(request.url, 'http://localhost').pathname === '/api/ai/chat') return handleAi(request, response, cors);
   if (request.method === 'POST' && new URL(request.url, 'http://localhost').pathname === '/api/tickets') return handleTicket(request, response, cors);
+  if (request.method === 'POST' && new URL(request.url, 'http://localhost').pathname === '/api/contact') return handleContact(request, response, cors);
   return serveStatic(request, response);
 }).listen(port, '0.0.0.0', () => console.log(`Twoday consumer AI listening on ${port}.`));
 
@@ -86,6 +90,23 @@ async function handleTicket(request, response, cors) {
     }
     return finish(response, 201, JSON.stringify({ ticketId: ticket.id, status: delivered ? 'sent' : 'queued' }), { ...cors, 'Content-Type': 'application/json' });
   } catch { return finish(response, 500, JSON.stringify({ error: 'Ticket could not be created.' }), { ...cors, 'Content-Type': 'application/json' }); }
+}
+
+async function handleContact(request, response, cors) {
+  try {
+    const body = await readJson(request);
+    const contact = {
+      name: String(body.name || '').trim().slice(0, 200), email: String(body.email || '').trim().slice(0, 200), company: String(body.company || 'Not provided').trim().slice(0, 200), reason: String(body.reason || 'Other').trim().slice(0, 100), message: String(body.message || '').trim().slice(0, 5000)
+    };
+    if (!contact.name || !/^\S+@\S+\.\S+$/.test(contact.email) || !contact.message) return finish(response, 400, JSON.stringify({ error: 'Name, email and message are required.' }), { ...cors, 'Content-Type': 'application/json' });
+    const subject = `Business inquiry: ${contact.reason}`;
+    const text = `Name: ${contact.name}\nEmail: ${contact.email}\nCompany: ${contact.company}\nReason: ${contact.reason}\n\n${contact.message}`;
+    if (!emailApiKey) return finish(response, 503, JSON.stringify({ error: 'Email delivery is not configured.' }), { ...cors, 'Content-Type': 'application/json' });
+    const sent = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: `Bearer ${emailApiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: emailFrom, to: [contactEmail], reply_to: contact.email, subject, text }) });
+    const result = await sent.json().catch(() => ({}));
+    if (!sent.ok) return finish(response, 502, JSON.stringify({ error: 'Email delivery failed.' }), { ...cors, 'Content-Type': 'application/json' });
+    return finish(response, 201, JSON.stringify({ status: 'sent', messageId: result.id || null }), { ...cors, 'Content-Type': 'application/json' });
+  } catch { return finish(response, 500, JSON.stringify({ error: 'Contact message could not be sent.' }), { ...cors, 'Content-Type': 'application/json' }); }
 }
 
 async function serveStatic(request, response) {

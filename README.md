@@ -57,3 +57,17 @@ Then visit `http://localhost:8080`.
 - `Dockerfile.consumer-ai` and `bunny.consumer-ai.jsonc` provide the Bunny Magic Container version. The container serves the static site and `/api/ai/chat` from the same origin, so the website works without a separate API URL.
 - For real server-side submissions or a ticket inbox, connect a form service such as Netlify Forms or Formspree later.
 - Review `privacy.html` before publishing any game or feature that collects player data.
+
+## Contact delivery
+
+The support form uses `/api/tickets` and the business contact form uses `/api/contact`. Configure these Bunny container variables for live delivery:
+
+```text
+SUPPORT_WEBHOOK_URL=<team webhook URL>
+RESEND_API_KEY=<Resend API key>
+EMAIL_FROM=TwoDay Studio <verified-sender@example.com>
+CONTACT_EMAIL=contact@twodaystudio.com
+DATA_DIR=/data
+```
+
+Without the webhook, tickets remain queued in persistent storage. Without `RESEND_API_KEY`, business messages use the email fallback and are not reported as delivered.

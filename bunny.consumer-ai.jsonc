@@ -15,6 +15,9 @@
           "LOCAL_AI_MODEL": "LOCAL_AI_MODEL",
           "DATA_DIR": "DATA_DIR",
           "SUPPORT_WEBHOOK_URL": "SUPPORT_WEBHOOK_URL",
+          "RESEND_API_KEY": "RESEND_API_KEY",
+          "EMAIL_FROM": "EMAIL_FROM",
+          "CONTACT_EMAIL": "CONTACT_EMAIL",
           "PORT": "PORT"
         }
       }
