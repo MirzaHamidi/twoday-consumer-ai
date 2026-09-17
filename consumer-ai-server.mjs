@@ -55,16 +55,18 @@ async function handleAi(request, response, cors) {
 
 async function searchWeb(query) {
   try {
-    const url = `https://www.bing.com/search?q=${encodeURIComponent(query.slice(0, 300))}&format=rss`;
-    const result = await fetch(`https://www.bing.com/search?q=${encodeURIComponent(query.slice(0, 300))}`, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TwodayStudio-ToDo-Assistant/1.0)' }, signal: AbortSignal.timeout(7000) });
+    const url = `https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query.slice(0, 300))}`;
+    const result = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TwodayStudio-ToDo-Assistant/1.0)' }, signal: AbortSignal.timeout(7000) });
     if (!result.ok) return { context: '\nNo live web results were available. Say so clearly if relevant.', citations: [] };
     const html = await result.text();
-    const citations = [...html.matchAll(/<li[^>]+class="b_algo"[^>]*>([\s\S]*?)<\/li>/gi)].slice(0, 5).map(match => {
-      const item = match[1];
-      const link = item.match(/<h2[^>]*>\s*<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i);
-      const snippet = item.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
-      return link ? { title: stripHtml(link[2]), url: link[1], snippet: stripHtml(snippet?.[1] || '') } : null;
-    }).filter(Boolean);
+    const citations = [...html.matchAll(/<a\b[^>]*class=['"][^'"]*result-link[^'"]*['"][^>]*>([\s\S]*?)<\/a>/gi)].slice(0, 5).map(match => {
+      const rawLink = match[0].match(/\bhref=['"]([^'"]+)['"]/i)?.[1] || '';
+      let target = rawLink;
+      try { target = new URL(rawLink.startsWith('//') ? `https:${rawLink}` : rawLink).searchParams.get('uddg') || rawLink; } catch { /* Keep the original result URL. */ }
+      const afterLink = html.slice(match.index + match[0].length);
+      const snippet = afterLink.match(/<[^>]*class=['"]result-snippet['"][^>]*>([\s\S]*?)<\/[^>]+>/i);
+      return { title: stripHtml(match[1]), url: target, snippet: stripHtml(snippet?.[1] || '') };
+    });
     const context = citations.length ? `\nLive web results for this request (use only as leads and do not invent details):\n${citations.map((item, index) => `${index + 1}. ${item.title} - ${item.snippet} (${item.url})`).join('\n')}` : '\nNo live web results were found.';
     return { context, citations };
   } catch { return { context: '\nLive web search failed. Do not claim that you searched successfully.', citations: [] }; }
