@@ -143,7 +143,6 @@ mailForms.forEach((form) => {
         device: formData.get("device"),
         message: formData.get("message"),
         website: formData.get("website"),
-        notBot: formData.get("notBot") === "on",
         turnstileToken: form.querySelector("[data-turnstile]")?.dataset.token || "",
       };
       try {
@@ -194,7 +193,7 @@ mailForms.forEach((form) => {
         let contactResponse;
         for (const endpoint of ["https://ai.twodaystudio.com/api/contact", "https://mc-wvgsibkmje.bunny.run/api/contact"]) {
           try {
-            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message"), website: formData.get("website"), notBot: formData.get("notBot") === "on", turnstileToken: form.querySelector("[data-turnstile]")?.dataset.token || "" }) });
+            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message"), website: formData.get("website"), turnstileToken: form.querySelector("[data-turnstile]")?.dataset.token || "" }) });
             if (contactResponse.ok) break;
           } catch (error) { console.debug("Contact endpoint unavailable.", error); }
         }
