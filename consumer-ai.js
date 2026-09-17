@@ -19,7 +19,7 @@
   const messages = root.querySelector('[data-ai-messages]');
   const searchButton = root.querySelector('[data-ai-search]');
   const aiTurnstileSlot = root.querySelector('[data-ai-turnstile]');
-  const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || '';
+  const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || ({ 'twodaystudio.com': '0x4AAAAAAE7A_7JtZWat98Co', 'www.twodaystudio.com': '0x4AAAAAAE7BEUnDP7tuy_4V' })[window.location.hostname] || '';
   let turnstileReady;
   let webSearch = false;
   let history = [];

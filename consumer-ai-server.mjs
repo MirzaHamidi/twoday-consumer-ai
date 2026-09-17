@@ -15,6 +15,7 @@ const contactEmail = process.env.CONTACT_EMAIL || 'contact@twodaystudio.com';
 const emailApiKey = process.env.RESEND_API_KEY || '';
 const emailFrom = process.env.EMAIL_FROM || 'TwoDay Studio <onboarding@resend.dev>';
 const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY || '';
+const turnstileSecretKeyWww = process.env.TURNSTILE_SECRET_KEY_WWW || turnstileSecretKey;
 const turnstileRequired = process.env.TURNSTILE_REQUIRED !== 'false';
 const requestCounts = new Map();
 const allowedOrigins = new Set(['https://2daystudio.com', 'https://www.2daystudio.com', 'https://twodaystudio.com', 'https://www.twodaystudio.com']);
@@ -108,9 +109,10 @@ async function persistTicket(ticket) {
 
 async function verifyTurnstile(request, body) {
   if (!turnstileRequired) return true;
-  if (!turnstileSecretKey || typeof body.turnstileToken !== 'string' || !body.turnstileToken) return false;
+  const secret = request.headers.get('origin') === 'https://www.twodaystudio.com' ? turnstileSecretKeyWww : turnstileSecretKey;
+  if (!secret || typeof body.turnstileToken !== 'string' || !body.turnstileToken) return false;
   try {
-    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret: turnstileSecretKey, response: body.turnstileToken, remoteip: request.socket.remoteAddress }) });
+    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret, response: body.turnstileToken, remoteip: request.socket.remoteAddress }) });
     return result.ok && (await result.json()).success === true;
   } catch { return false; }
 }

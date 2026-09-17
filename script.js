@@ -106,7 +106,7 @@ const buildMailto = ({ subject, lines }) => {
   return `mailto:contact@twodaystudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
-const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || "";
+const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || ({ "twodaystudio.com": "0x4AAAAAAE7A_7JtZWat98Co", "www.twodaystudio.com": "0x4AAAAAAE7BEUnDP7tuy_4V" })[window.location.hostname] || "";
 let turnstileReady;
 const loadTurnstile = () => {
   if (!turnstileSiteKey) return Promise.resolve(null);
