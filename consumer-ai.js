@@ -2,7 +2,7 @@
   const root = document.querySelector('[data-consumer-ai]');
   if (!root) return;
 
-const endpoint = window.TWODAY_AI_ENDPOINT || 'https://ai.twodaystudio.com/api/ai/chat';
+const endpoint = window.TWODAY_AI_ENDPOINT || '/api/ai/chat';
   const launcher = root.querySelector('[data-ai-toggle]');
   const panel = root.querySelector('#consumer-ai-panel');
   const form = root.querySelector('[data-ai-form]');
