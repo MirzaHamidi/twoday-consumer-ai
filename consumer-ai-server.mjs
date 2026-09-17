@@ -40,6 +40,7 @@ async function handleAi(request, response, cors) {
     const language = detectLanguage(message, body.language);
     const history = Array.isArray(body.history) ? body.history.filter(item => item && ['user', 'assistant'].includes(item.role) && typeof item.content === 'string').slice(-12) : [];
     if (isTicketRequest(message)) return finish(response, 200, JSON.stringify({ answer: ticketPrompt(language), citations: [], ticketIntent: true }), { ...cors, 'Content-Type': 'application/json' });
+    if (isGameRequest(message)) return finish(response, 200, JSON.stringify({ answer: gamePrompt(language), citations: [], gameIntent: true }), { ...cors, 'Content-Type': 'application/json' });
     if (isExternalLinkRequest(message)) return finish(response, 200, JSON.stringify({ answer: externalLinkNotice(language), citations: [] }), { ...cors, 'Content-Type': 'application/json' });
     const search = body.webSearch === true ? await searchWeb(message) : { context: '', citations: [] };
     const languageName = language === 'tr' ? 'Turkish' : language === 'ar' ? 'Egyptian Arabic (Masri)' : language === 'zh' ? 'Simplified Chinese' : language === 'en' ? 'English' : language;
@@ -91,7 +92,14 @@ function sanitizePublicAnswer(value) {
     try { return allowed.has(new URL(url).hostname.toLowerCase()) ? url : ''; } catch { return ''; }
   }).replace(/\b(?:www\.)?(?!twodaystudio\.com\b|2daystudio\.com\b)[a-z0-9-]+\.(?:com|net|org|io|co|dev|ai|app)(?:\/[^\s)]*)?/gi, '').replace(/[ \t]{2,}/g, ' ').trim();
 }
-function isTicketRequest(message) { return /\b(ticket|support|complaint|report|bug|problem|issue|broken|crash|error|feedback|help|not working|can't|cannot|şikayet|sikayet|destek|arıza|ariza|sorun|rapor|hata|çalışmıyor|calismiyor|yardım|投诉|问题|工单|故障|反馈|بلاغ|شكوى|مشكلة|عطل)\b/i.test(message); }
+function isTicketRequest(message) { return /\b(ticket|support|complaint|report|bug|problem|issue|broken|crash|error|feedback|help|not working|can't|cannot|şikayet|sikayet|destek|arıza|ariza|sorun|rapor|hata|çalışmıyor|calismiyor|yardım)\b/i.test(message) || /投诉|问题|工单|故障|反馈|بلاغ|شكوى|مشكلة|عطل/u.test(message); }
+function isGameRequest(message) { return /\b(game|games|play|which games|what games|our games|game list|oyun|oyunlar|oynamak|hangi oyun)\b/i.test(message) || /ألعاب|لعبة|游戏|玩什么/u.test(message); }
+function gamePrompt(language) {
+  if (language === 'tr') return 'Şu anda iki oyunumuz var. Hangisini oynamak istersiniz? 1. One Two Dice  2. Hoop Pong. Numara veya oyun adıyla seçim yapabilirsiniz.';
+  if (language === 'ar') return 'لدينا لعبتان متاحتان الآن. أي لعبة تريد أن تلعب؟ 1. One Two Dice  2. Hoop Pong. يمكنك اختيار الرقم أو اسم اللعبة.';
+  if (language === 'zh') return '目前有两款游戏。你想玩哪一款？1. One Two Dice  2. Hoop Pong。可以回复数字或游戏名称。';
+  return 'We currently have two playable games. Which would you like to play? 1. One Two Dice  2. Hoop Pong. Reply with the number or game name.';
+}
 function ticketPrompt(language) {
   if (language === 'tr') return 'Elbette, destek talebi oluşturabiliriz. E-posta, ilgili alan veya oyun, sorun, cihaz ve ayrıntıları adım adım alacağım.';
   if (language === 'ar') return 'بالتأكيد، يمكنني مساعدتك في إنشاء تذكرة دعم. سأطلب بريدك الإلكتروني واللعبة أو القسم والمشكلة والجهاز والتفاصيل خطوة بخطوة.';

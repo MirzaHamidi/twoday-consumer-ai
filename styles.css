@@ -171,7 +171,8 @@ body::before {
 }
 
 /* Consumer AI panel: uses the site's liquid-glass language without covering primary content. */
-.consumer-ai { position: fixed !important; right: max(1.25rem, env(safe-area-inset-right)); bottom: max(1.25rem, env(safe-area-inset-bottom)); z-index: 2147483000; display: block !important; visibility: visible !important; opacity: 1 !important; font-family: var(--font-primary); isolation: isolate; }
+.consumer-ai { position: fixed !important; right: max(1.25rem, env(safe-area-inset-right)); bottom: max(1.25rem, env(safe-area-inset-bottom)); z-index: 2147483000; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: none; font-family: var(--font-primary); isolation: isolate; }
+.consumer-ai-launcher, .consumer-ai-panel { pointer-events: auto; }
 .consumer-ai-launcher { width: 3.5rem; height: 3.5rem; display: grid; place-items: center; padding: .65rem; border: 1px solid var(--glass-border); border-radius: 50%; background: var(--brand-red); box-shadow: var(--shadow); cursor: pointer; }
 .consumer-ai-launcher img { width: 100%; height: 100%; object-fit: contain; }
 .consumer-ai-panel { width: min(390px, calc(100vw - 2rem)); max-height: min(640px, calc(100vh - 7rem)); overflow: hidden; display: flex; flex-direction: column; margin-bottom: .75rem; border: 1px solid var(--glass-border); border-radius: 24px; background: var(--lg-bg); backdrop-filter: var(--lg-blur); box-shadow: var(--glass-shadow); }
@@ -186,6 +187,8 @@ body::before {
 .consumer-ai-message.is-user { align-self: flex-end; background: var(--brand-red); color: #fff; }
 .consumer-ai-ticket { align-self: flex-start; width: min(100%, 18rem); min-height: 2.75rem; border: 1px solid var(--mint); border-radius: 10px; padding: .65rem .8rem; background: color-mix(in srgb, var(--mint) 12%, transparent); color: var(--mint); cursor: pointer; font: inherit; font-weight: 700; text-align: center; }
 .consumer-ai-ticket:hover, .consumer-ai-ticket:focus-visible { background: var(--mint); color: var(--bg); }
+.consumer-ai-game { align-self: flex-start; width: min(100%, 18rem); min-height: 2.65rem; border: 1px solid var(--cyan); border-radius: 10px; padding: .6rem .8rem; background: color-mix(in srgb, var(--cyan) 12%, transparent); color: var(--text); cursor: pointer; font: inherit; font-weight: 700; text-align: center; }
+.consumer-ai-game:hover, .consumer-ai-game:focus-visible { background: var(--cyan); color: var(--bg); }
 .consumer-ai-form { padding: .8rem; border-top: 1px solid var(--line); }
 .consumer-ai-form textarea { width: 100%; resize: vertical; min-height: 3.2rem; padding: .7rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; }
 .consumer-ai-actions { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .6rem; }

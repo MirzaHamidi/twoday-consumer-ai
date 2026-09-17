@@ -21,6 +21,7 @@
   let webSearch = false;
   let history = [];
   let ticketFlow = null;
+  let gameFlow = null;
 
 
   const copy = {
@@ -95,6 +96,7 @@
     return true;
   }
   function openSupportForm() {
+    toggle(false);
     const support = document.querySelector('[data-form-type="support"]');
     if (support) {
       support.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -104,6 +106,26 @@
     try { sessionStorage.setItem('twoday-ticket-draft', JSON.stringify(ticketFlow)); } catch { /* Storage may be disabled. */ }
     if (!/\/index\.html?$|\/$/.test(window.location.pathname)) window.location.href = 'index.html#contact';
     else window.location.hash = 'contact';
+  }
+  function gameText(language, key) {
+    const prompts = {
+      en: { choose: 'Which game would you like to play? Choose 1 for One Two Dice or 2 for Hoop Pong.', dice: 'Play One Two Dice', hoop: 'Play Hoop Pong', invalid: 'Please choose 1 for One Two Dice or 2 for Hoop Pong.' },
+      tr: { choose: 'Hangi oyunu oynamak istersiniz? One Two Dice için 1, Hoop Pong için 2 yazın.', dice: 'One Two Dice oyna', hoop: 'Hoop Pong oyna', invalid: 'Lütfen One Two Dice için 1 veya Hoop Pong için 2 seçin.' },
+      ar: { choose: 'أي لعبة تريد أن تلعب؟ اختر 1 للعبة One Two Dice أو 2 للعبة Hoop Pong.', dice: 'العب One Two Dice', hoop: 'العب Hoop Pong', invalid: 'اختر 1 للعبة One Two Dice أو 2 للعبة Hoop Pong.' },
+      zh: { choose: '你想玩哪款游戏？选择 1 玩 One Two Dice，或选择 2 玩 Hoop Pong。', dice: '玩 One Two Dice', hoop: '玩 Hoop Pong', invalid: '请选择 1（One Two Dice）或 2（Hoop Pong）。' }
+    };
+    return (prompts[language] || prompts.en)[key];
+  }
+  function openGame(game) {
+    gameFlow = null;
+    toggle(false);
+    window.location.href = `play.html?game=${encodeURIComponent(game)}`;
+  }
+  function continueGameFlow(text) {
+    const value = text.trim().toLowerCase();
+    if (/^(1|one\s*two|dice|one two dice)/i.test(value) || /one\s*two|dice/i.test(value)) return openGame('one-two-dice');
+    if (/^(2|hoop|pong|hoop pong)/i.test(value) || /hoop|pong/i.test(value)) return openGame('hoop-pong');
+    addMessage(gameText(gameFlow.language, 'invalid'), 'assistant');
   }
   async function continueTicketFlow(text) {
     const lang = ticketFlow.language;
@@ -140,6 +162,7 @@
     const text = input.value.trim();
     if (!text) return;
     if (ticketFlow) { addMessage(text, 'user'); input.value = ''; await continueTicketFlow(text); return; }
+    if (gameFlow) { addMessage(text, 'user'); input.value = ''; continueGameFlow(text); return; }
     const messageLanguage = detectLanguage(text);
     const t = copy[messageLanguage] || copy.en;
     addMessage(text, 'user'); input.value = ''; setCopy(messageLanguage); setBusy(true);
@@ -154,6 +177,18 @@
         ticket.type = 'button'; ticket.className = 'consumer-ai-ticket'; ticket.textContent = messageLanguage === 'tr' ? 'Destek formunu aç' : messageLanguage === 'ar' ? 'فتح نموذج الدعم' : messageLanguage === 'zh' ? '打开支持表单' : 'Open support form';
         ticket.addEventListener('click', openSupportForm);
         messages.appendChild(ticket);
+        messages.scrollTop = messages.scrollHeight;
+      } else if (data.gameIntent) {
+        thinking.remove();
+        gameFlow = { language: messageLanguage };
+        addMessage(data.answer, 'assistant');
+        const dice = document.createElement('button');
+        dice.type = 'button'; dice.className = 'consumer-ai-game'; dice.textContent = `1. ${gameText(messageLanguage, 'dice')}`;
+        dice.addEventListener('click', () => openGame('one-two-dice'));
+        const hoop = document.createElement('button');
+        hoop.type = 'button'; hoop.className = 'consumer-ai-game'; hoop.textContent = `2. ${gameText(messageLanguage, 'hoop')}`;
+        hoop.addEventListener('click', () => openGame('hoop-pong'));
+        messages.append(dice, hoop);
         messages.scrollTop = messages.scrollHeight;
       } else {
         thinking.textContent = sanitizePublicAnswer(data.answer);
