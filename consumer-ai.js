@@ -5,7 +5,7 @@
     root.className = 'consumer-ai';
     root.dataset.consumerAi = '';
     root.setAttribute('aria-label', 'ToDo Assistant');
-    root.innerHTML = `<button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open ToDo Assistant"><img src="assets/mascotwht.png" alt="Toto, ToDo Assistant"></button><section class="consumer-ai-panel" id="consumer-ai-panel" hidden><header class="consumer-ai-header"><div><p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p><h2 data-ai-label="title">ToDo Assistant</h2></div><button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button></header><div class="consumer-ai-messages" data-ai-messages aria-live="polite"><p class="consumer-ai-message is-assistant" data-ai-welcome>Ask about our games, studio, or publishing.</p></div><form class="consumer-ai-form" data-ai-form><label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label><textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask ToDo Assistant..."></textarea><div class="consumer-ai-actions"><button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Toggle web search">⌕ <span data-ai-label="search">Web search</span></button><button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button></div></form></section>`;
+    root.innerHTML = `<button class="consumer-ai-launcher" type="button" data-ai-toggle aria-expanded="false" aria-controls="consumer-ai-panel" title="Open ToDo Assistant"><img src="assets/mascotwht.png" alt="Toto, ToDo Assistant"></button><section class="consumer-ai-panel" id="consumer-ai-panel" hidden><header class="consumer-ai-header"><div><p class="eyebrow" data-ai-label="eyebrow">Twoday Studio</p><h2 data-ai-label="title">ToDo Assistant</h2></div><button class="consumer-ai-close" type="button" data-ai-toggle aria-label="Close AI">×</button></header><div class="consumer-ai-messages" data-ai-messages aria-live="polite"><p class="consumer-ai-message is-assistant" data-ai-welcome>Ask about our games, studio, or publishing.</p></div><form class="consumer-ai-form" data-ai-form><label class="sr-only" for="consumer-ai-input" data-ai-label="inputLabel">Message</label><textarea id="consumer-ai-input" data-ai-input rows="2" maxlength="4000" required placeholder="Ask ToDo Assistant..."></textarea><div class="turnstile-slot" data-ai-turnstile aria-label="Security verification"></div><div class="consumer-ai-actions"><button class="consumer-ai-search" type="button" data-ai-search aria-pressed="false" title="Toggle web search">⌕ <span data-ai-label="search">Web search</span></button><button class="button button-primary consumer-ai-send" type="submit"><span data-ai-label="send">Send</span></button></div></form></section>`;
     document.body.appendChild(root);
   }
 
@@ -18,9 +18,21 @@
   const input = root.querySelector('[data-ai-input]');
   const messages = root.querySelector('[data-ai-messages]');
   const searchButton = root.querySelector('[data-ai-search]');
+  const aiTurnstileSlot = root.querySelector('[data-ai-turnstile]');
+  const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || '';
+  let turnstileReady;
   let webSearch = false;
   let history = [];
   let ticketFlow = null;
+
+  async function renderAiTurnstile() {
+    if (!turnstileSiteKey || !aiTurnstileSlot || aiTurnstileSlot.dataset.widgetId) return;
+    if (!window.turnstile) {
+      turnstileReady ||= new Promise((resolve) => { const script = document.createElement('script'); script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; script.async = true; script.onload = () => resolve(window.turnstile || null); script.onerror = () => resolve(null); document.head.appendChild(script); });
+      await turnstileReady;
+    }
+    if (window.turnstile) aiTurnstileSlot.dataset.widgetId = String(window.turnstile.render(aiTurnstileSlot, { sitekey: turnstileSiteKey, callback: (token) => { aiTurnstileSlot.dataset.token = token; }, 'expired-callback': () => { delete aiTurnstileSlot.dataset.token; }, 'error-callback': () => { delete aiTurnstileSlot.dataset.token; } }));
+  }
 
   const copy = {
     en: { eyebrow: 'Twoday Studio', title: 'ToDo Assistant', welcome: 'Ask about our games, studio, or publishing.', inputLabel: 'Message', placeholder: 'Ask ToDo Assistant...', search: 'Web search', send: 'Send', thinking: 'Thinking…', error: 'The AI is unavailable right now. Please try again.' },
@@ -73,7 +85,9 @@
     return (prompts[language] || prompts.en)[key];
   }
   async function submitTicketFlow() {
-    const payload = { email: ticketFlow.email, game: ticketFlow.game, issue: ticketFlow.issue, device: ticketFlow.device, message: ticketFlow.details, website: '', notBot: true };
+    await renderAiTurnstile();
+    const payload = { email: ticketFlow.email, game: ticketFlow.game, issue: ticketFlow.issue, device: ticketFlow.device, message: ticketFlow.details, website: '', notBot: true, turnstileToken: aiTurnstileSlot?.dataset.token || '' };
+    if (turnstileSiteKey && !payload.turnstileToken) { addMessage(ticketFlow.language === 'tr' ? 'Lütfen güvenlik doğrulamasını tamamlayın, sonra ayrıntıyı tekrar gönderin.' : 'Please complete the security verification, then send the details again.', 'assistant'); return; }
     let lastError;
     for (const url of ticketEndpoints) {
       try {
@@ -139,4 +153,5 @@
     finally { setBusy(false); input.focus(); }
   });
   setCopy();
+  renderAiTurnstile();
 })();

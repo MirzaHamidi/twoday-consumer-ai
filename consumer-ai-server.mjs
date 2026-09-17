@@ -14,6 +14,8 @@ const supportWebhookUrl = process.env.SUPPORT_WEBHOOK_URL || '';
 const contactEmail = process.env.CONTACT_EMAIL || 'contact@twodaystudio.com';
 const emailApiKey = process.env.RESEND_API_KEY || '';
 const emailFrom = process.env.EMAIL_FROM || 'TwoDay Studio <onboarding@resend.dev>';
+const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY || '';
+const turnstileRequired = process.env.TURNSTILE_REQUIRED !== 'false';
 const requestCounts = new Map();
 const allowedOrigins = new Set(['https://2daystudio.com', 'https://www.2daystudio.com', 'https://twodaystudio.com', 'https://www.twodaystudio.com']);
 
@@ -104,9 +106,19 @@ async function persistTicket(ticket) {
   }
 }
 
-function antiSpamDecision(request, body, scope) {
+async function verifyTurnstile(request, body) {
+  if (!turnstileRequired) return true;
+  if (!turnstileSecretKey || typeof body.turnstileToken !== 'string' || !body.turnstileToken) return false;
+  try {
+    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret: turnstileSecretKey, response: body.turnstileToken, remoteip: request.socket.remoteAddress }) });
+    return result.ok && (await result.json()).success === true;
+  } catch { return false; }
+}
+
+async function antiSpamDecision(request, body, scope) {
   if (body.website) return { status: 400, error: 'Spam check failed.' };
   if (body.notBot !== true) return { status: 400, error: 'Please confirm you are not a robot.' };
+  if (!(await verifyTurnstile(request, body))) return { status: 403, error: 'Security verification failed. Please complete the challenge and try again.' };
   const ip = (request.headers.get('x-forwarded-for') || request.socket.remoteAddress || 'unknown').split(',')[0].trim();
   const email = String(body.email || '').trim().toLowerCase();
   const key = `${scope}:${ip}:${email}`;
@@ -120,7 +132,7 @@ function antiSpamDecision(request, body, scope) {
 async function handleTicket(request, response, cors) {
   try {
     const body = await readJson(request);
-    const spam = antiSpamDecision(request, body, 'ticket');
+    const spam = await antiSpamDecision(request, body, 'ticket');
     if (spam.status) return finish(response, spam.status, JSON.stringify({ error: spam.error }), { ...cors, 'Content-Type': 'application/json', ...(spam.retryAfter ? { 'Retry-After': spam.retryAfter } : {}) });
     const ticket = { id: `TS-${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`, createdAt: new Date().toISOString(), email: String(body.email || '').trim().slice(0, 200), game: String(body.game || 'Website').trim().slice(0, 100), issue: String(body.issue || 'Other').trim().slice(0, 100), device: String(body.device || '').trim().slice(0, 200), message: String(body.message || '').trim().slice(0, 4000) };
     if (!ticket.email || !/^\S+@\S+\.\S+$/.test(ticket.email) || !ticket.message) return finish(response, 400, JSON.stringify({ error: 'Email and message are required.' }), { ...cors, 'Content-Type': 'application/json' });
@@ -141,7 +153,7 @@ async function handleTicket(request, response, cors) {
 async function handleContact(request, response, cors) {
   try {
     const body = await readJson(request);
-    const spam = antiSpamDecision(request, body, 'contact');
+    const spam = await antiSpamDecision(request, body, 'contact');
     if (spam.status) return finish(response, spam.status, JSON.stringify({ error: spam.error }), { ...cors, 'Content-Type': 'application/json', ...(spam.retryAfter ? { 'Retry-After': spam.retryAfter } : {}) });
     const contact = {
       name: String(body.name || '').trim().slice(0, 200), email: String(body.email || '').trim().slice(0, 200), company: String(body.company || 'Not provided').trim().slice(0, 200), reason: String(body.reason || 'Other').trim().slice(0, 100), message: String(body.message || '').trim().slice(0, 5000)

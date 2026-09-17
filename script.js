@@ -106,7 +106,23 @@ const buildMailto = ({ subject, lines }) => {
   return `mailto:contact@twodaystudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
+const turnstileSiteKey = window.TWODAY_TURNSTILE_SITE_KEY || "";
+let turnstileReady;
+const loadTurnstile = () => {
+  if (!turnstileSiteKey) return Promise.resolve(null);
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  if (!turnstileReady) turnstileReady = new Promise((resolve) => { const script = document.createElement("script"); script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; script.async = true; script.onload = () => resolve(window.turnstile || null); script.onerror = () => resolve(null); document.head.appendChild(script); });
+  return turnstileReady;
+};
+const renderTurnstile = async (form) => {
+  const slot = form.querySelector("[data-turnstile]");
+  const api = await loadTurnstile();
+  if (!slot || !api || slot.dataset.widgetId) return;
+  slot.dataset.widgetId = String(api.render(slot, { sitekey: turnstileSiteKey, callback: (token) => { slot.dataset.token = token; }, "expired-callback": () => { delete slot.dataset.token; }, "error-callback": () => { delete slot.dataset.token; } }));
+};
+
 mailForms.forEach((form) => {
+  renderTurnstile(form);
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -128,6 +144,7 @@ mailForms.forEach((form) => {
         message: formData.get("message"),
         website: formData.get("website"),
         notBot: formData.get("notBot") === "on",
+        turnstileToken: form.querySelector("[data-turnstile]")?.dataset.token || "",
       };
       try {
         let ticketResponse;
@@ -177,7 +194,7 @@ mailForms.forEach((form) => {
         let contactResponse;
         for (const endpoint of ["https://ai.twodaystudio.com/api/contact", "https://mc-wvgsibkmje.bunny.run/api/contact"]) {
           try {
-            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message"), website: formData.get("website"), notBot: formData.get("notBot") === "on" }) });
+            contactResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: formData.get("name"), email: formData.get("email"), company, reason, message: formData.get("message"), website: formData.get("website"), notBot: formData.get("notBot") === "on", turnstileToken: form.querySelector("[data-turnstile]")?.dataset.token || "" }) });
             if (contactResponse.ok) break;
           } catch (error) { console.debug("Contact endpoint unavailable.", error); }
         }
