@@ -13,6 +13,8 @@
           "LOCAL_AI_BASE_URL": "LOCAL_AI_BASE_URL",
           "LOCAL_AI_API_KEY": "LOCAL_AI_API_KEY",
           "LOCAL_AI_MODEL": "LOCAL_AI_MODEL",
+          "DATA_DIR": "DATA_DIR",
+          "SUPPORT_WEBHOOK_URL": "SUPPORT_WEBHOOK_URL",
           "PORT": "PORT"
         }
       }

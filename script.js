@@ -107,7 +107,7 @@ const buildMailto = ({ subject, lines }) => {
 };
 
 mailForms.forEach((form) => {
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!form.reportValidity()) {
@@ -118,6 +118,32 @@ mailForms.forEach((form) => {
     const status = form.querySelector("[data-form-status]");
     const type = form.dataset.formType;
     let mailto = "";
+
+    if (type === "support") {
+      const ticketPayload = {
+        email: formData.get("email"),
+        game: formData.get("game"),
+        issue: formData.get("issue"),
+        device: formData.get("device"),
+        message: formData.get("message"),
+      };
+      try {
+        let ticketResponse;
+        for (const endpoint of ["https://ai.twodaystudio.com/api/tickets", "https://mc-wvgsibkmje.bunny.run/api/tickets"]) {
+          try {
+            ticketResponse = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ticketPayload) });
+            if (ticketResponse.ok) break;
+          } catch (error) { console.debug("Ticket endpoint unavailable.", error); }
+        }
+        const ticket = await ticketResponse?.json();
+        if (!ticketResponse?.ok) throw new Error(ticket?.error || "Ticket request failed");
+        if (status) status.textContent = `Ticket ${ticket.ticketId} received. We will review it shortly.`;
+        form.reset();
+        return;
+      } catch (error) {
+        console.warn("Ticket API unavailable; opening email fallback.", error);
+      }
+    }
 
     if (type === "support") {
       const ticketId = createTicketId();
