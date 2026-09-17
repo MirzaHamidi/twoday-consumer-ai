@@ -91,13 +91,24 @@ async function sendEmail({ replyTo, subject, text }) {
   }
 }
 
+async function persistTicket(ticket) {
+  const line = `${JSON.stringify(ticket)}\n`;
+  try {
+    await mkdir(dataDir, { recursive: true });
+    await appendFile(join(dataDir, 'tickets.ndjson'), line, 'utf8');
+  } catch {
+    const fallbackDir = join(root, 'data');
+    await mkdir(fallbackDir, { recursive: true });
+    await appendFile(join(fallbackDir, 'tickets.ndjson'), line, 'utf8');
+  }
+}
+
 async function handleTicket(request, response, cors) {
   try {
     const body = await readJson(request);
     const ticket = { id: `TS-${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`, createdAt: new Date().toISOString(), email: String(body.email || '').trim().slice(0, 200), game: String(body.game || 'Website').trim().slice(0, 100), issue: String(body.issue || 'Other').trim().slice(0, 100), device: String(body.device || '').trim().slice(0, 200), message: String(body.message || '').trim().slice(0, 4000) };
     if (!ticket.email || !/^\S+@\S+\.\S+$/.test(ticket.email) || !ticket.message) return finish(response, 400, JSON.stringify({ error: 'Email and message are required.' }), { ...cors, 'Content-Type': 'application/json' });
-    await mkdir(dataDir, { recursive: true });
-    await appendFile(join(dataDir, 'tickets.ndjson'), `${JSON.stringify(ticket)}\n`, 'utf8');
+    await persistTicket(ticket);
     const text = `Ticket: ${ticket.id}\nGame: ${ticket.game}\nIssue: ${ticket.issue}\nFrom: ${ticket.email}\nDevice: ${ticket.device || 'Not provided'}\n\n${ticket.message}`;
     let delivered = false;
     if (supportWebhookUrl) {
