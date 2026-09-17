@@ -78,13 +78,17 @@ function ticketPrompt(language) {
 
 async function sendEmail({ replyTo, subject, text }) {
   if (!emailApiKey) return { delivered: false, configured: false };
-  const upstream = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${emailApiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: emailFrom, to: [contactEmail], reply_to: replyTo, subject, text })
-  });
-  const result = await upstream.json().catch(() => ({}));
-  return { delivered: upstream.ok, configured: true, messageId: result.id || null };
+  try {
+    const upstream = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${emailApiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: emailFrom, to: [contactEmail], reply_to: replyTo, subject, text })
+    });
+    const result = await upstream.json().catch(() => ({}));
+    return { delivered: upstream.ok, configured: true, messageId: result.id || null };
+  } catch {
+    return { delivered: false, configured: true };
+  }
 }
 
 async function handleTicket(request, response, cors) {
@@ -97,8 +101,10 @@ async function handleTicket(request, response, cors) {
     const text = `Ticket: ${ticket.id}\nGame: ${ticket.game}\nIssue: ${ticket.issue}\nFrom: ${ticket.email}\nDevice: ${ticket.device || 'Not provided'}\n\n${ticket.message}`;
     let delivered = false;
     if (supportWebhookUrl) {
-      const upstream = await fetch(supportWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, ticket }) });
-      delivered = upstream.ok;
+      try {
+        const upstream = await fetch(supportWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, ticket }) });
+        delivered = upstream.ok;
+      } catch { delivered = false; }
     }
     if (!delivered && emailApiKey) delivered = (await sendEmail({ replyTo: ticket.email, subject: `[Support ticket] ${ticket.game} / ${ticket.issue}`, text })).delivered;
     return finish(response, 201, JSON.stringify({ ticketId: ticket.id, status: delivered ? 'sent' : 'queued' }), { ...cors, 'Content-Type': 'application/json' });
