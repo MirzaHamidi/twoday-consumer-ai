@@ -76,6 +76,17 @@ function ticketPrompt(language) {
   return 'Yes, I can help create a support ticket. Fill in the support form below with your email, game, issue type, device, and details, then submit it to our team.';
 }
 
+async function sendEmail({ replyTo, subject, text }) {
+  if (!emailApiKey) return { delivered: false, configured: false };
+  const upstream = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${emailApiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: emailFrom, to: [contactEmail], reply_to: replyTo, subject, text })
+  });
+  const result = await upstream.json().catch(() => ({}));
+  return { delivered: upstream.ok, configured: true, messageId: result.id || null };
+}
+
 async function handleTicket(request, response, cors) {
   try {
     const body = await readJson(request);
@@ -83,11 +94,13 @@ async function handleTicket(request, response, cors) {
     if (!ticket.email || !/^\S+@\S+\.\S+$/.test(ticket.email) || !ticket.message) return finish(response, 400, JSON.stringify({ error: 'Email and message are required.' }), { ...cors, 'Content-Type': 'application/json' });
     await mkdir(dataDir, { recursive: true });
     await appendFile(join(dataDir, 'tickets.ndjson'), `${JSON.stringify(ticket)}\n`, 'utf8');
+    const text = `Ticket: ${ticket.id}\nGame: ${ticket.game}\nIssue: ${ticket.issue}\nFrom: ${ticket.email}\nDevice: ${ticket.device || 'Not provided'}\n\n${ticket.message}`;
     let delivered = false;
     if (supportWebhookUrl) {
-      const upstream = await fetch(supportWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: `[${ticket.id}] ${ticket.game} / ${ticket.issue}\nFrom: ${ticket.email}\nDevice: ${ticket.device || 'Not provided'}\n\n${ticket.message}`, ticket }) });
+      const upstream = await fetch(supportWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, ticket }) });
       delivered = upstream.ok;
     }
+    if (!delivered && emailApiKey) delivered = (await sendEmail({ replyTo: ticket.email, subject: `[Support ticket] ${ticket.game} / ${ticket.issue}`, text })).delivered;
     return finish(response, 201, JSON.stringify({ ticketId: ticket.id, status: delivered ? 'sent' : 'queued' }), { ...cors, 'Content-Type': 'application/json' });
   } catch { return finish(response, 500, JSON.stringify({ error: 'Ticket could not be created.' }), { ...cors, 'Content-Type': 'application/json' }); }
 }
@@ -102,10 +115,9 @@ async function handleContact(request, response, cors) {
     const subject = `Business inquiry: ${contact.reason}`;
     const text = `Name: ${contact.name}\nEmail: ${contact.email}\nCompany: ${contact.company}\nReason: ${contact.reason}\n\n${contact.message}`;
     if (!emailApiKey) return finish(response, 503, JSON.stringify({ error: 'Email delivery is not configured.' }), { ...cors, 'Content-Type': 'application/json' });
-    const sent = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: `Bearer ${emailApiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: emailFrom, to: [contactEmail], reply_to: contact.email, subject, text }) });
-    const result = await sent.json().catch(() => ({}));
-    if (!sent.ok) return finish(response, 502, JSON.stringify({ error: 'Email delivery failed.' }), { ...cors, 'Content-Type': 'application/json' });
-    return finish(response, 201, JSON.stringify({ status: 'sent', messageId: result.id || null }), { ...cors, 'Content-Type': 'application/json' });
+    const sent = await sendEmail({ replyTo: contact.email, subject, text });
+    if (!sent.delivered) return finish(response, 502, JSON.stringify({ error: 'Email delivery failed.' }), { ...cors, 'Content-Type': 'application/json' });
+    return finish(response, 201, JSON.stringify({ status: 'sent', messageId: sent.messageId }), { ...cors, 'Content-Type': 'application/json' });
   } catch { return finish(response, 500, JSON.stringify({ error: 'Contact message could not be sent.' }), { ...cors, 'Content-Type': 'application/json' }); }
 }
 
