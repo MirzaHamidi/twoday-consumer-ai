@@ -34,7 +34,8 @@
     const value = String(text || '');
     if (/[؀-ۿ]/u.test(value)) return 'ar';
     if (/[぀-ヿ㐀-鿿]/u.test(value)) return 'zh';
-    if (/[çğıİöşüÇĞIÖŞÜ]/u.test(value)) return 'tr';
+    if (/[çğıİöşüÇĞIÖŞÜ]/u.test(value) || /\b(merhaba|selam|sorun|rapor|şikayet|sikayet|destek|yardım|yardim|oyun|nasıl|nasil|nerede|neden|istiyorum|çalışmıyor|calismiyor)\b/i.test(value)) return 'tr';
+    if (/\b(hello|hi|hey|what|why|where|how|can|could|please|report|issue|problem|bug|help|website|game|understand|want|need|the|and|is|are|do|does|i|you)\b/i.test(value)) return 'en';
     return language();
   }
 
@@ -45,8 +46,8 @@
       try { return allowed.has(new URL(url).hostname.toLowerCase()) ? url : ''; } catch { return ''; }
     }).replace(/\b(?:www\.)?(?!twodaystudio\.com\b|2daystudio\.com\b)[a-z0-9-]+\.(?:com|net|org|io|co|dev|ai|app)(?:\/[^\s)]*)?/gi, '').replace(/[ \t]{2,}/g, ' ').trim();
   }
-  function setCopy() {
-    const t = copy[language()] || copy.en;
+  function setCopy(preferredLanguage = language()) {
+    const t = copy[preferredLanguage] || copy.en;
     root.querySelectorAll('[data-ai-label]').forEach((el) => { const key = el.dataset.aiLabel; if (t[key]) el.textContent = t[key]; });
     root.querySelector('[data-ai-welcome]').textContent = t.welcome;
     input.placeholder = t.placeholder;
@@ -93,6 +94,17 @@
     try { sessionStorage.removeItem('twoday-ticket-draft'); } catch { /* Storage may be disabled. */ }
     return true;
   }
+  function openSupportForm() {
+    const support = document.querySelector('[data-form-type="support"]');
+    if (support) {
+      support.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      support.querySelector('[name="email"]')?.focus({ preventScroll: true });
+      return;
+    }
+    try { sessionStorage.setItem('twoday-ticket-draft', JSON.stringify(ticketFlow)); } catch { /* Storage may be disabled. */ }
+    if (!/\/index\.html?$|\/$/.test(window.location.pathname)) window.location.href = 'index.html#contact';
+    else window.location.hash = 'contact';
+  }
   async function continueTicketFlow(text) {
     const lang = ticketFlow.language;
     const value = text.trim();
@@ -115,7 +127,7 @@
   launcher.addEventListener('click', () => toggle(panel.hidden));
   root.querySelector('.consumer-ai-close').addEventListener('click', () => toggle(false));
   searchButton.addEventListener('click', () => { webSearch = !webSearch; searchButton.setAttribute('aria-pressed', String(webSearch)); searchButton.dataset.enabled = String(webSearch); searchButton.classList.toggle('is-active', webSearch); });
-  document.querySelector('#lang-select')?.addEventListener('change', setCopy);
+  document.querySelector('#lang-select')?.addEventListener('change', () => setCopy());
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -128,19 +140,23 @@
     const text = input.value.trim();
     if (!text) return;
     if (ticketFlow) { addMessage(text, 'user'); input.value = ''; await continueTicketFlow(text); return; }
-    const t = copy[language()] || copy.en;
-    addMessage(text, 'user'); input.value = ''; setBusy(true);
+    const messageLanguage = detectLanguage(text);
+    const t = copy[messageLanguage] || copy.en;
+    addMessage(text, 'user'); input.value = ''; setCopy(messageLanguage); setBusy(true);
     const thinking = addMessage(t.thinking, 'assistant');
     try {
-      const data = await requestAnswer({ message: text, history, language: detectLanguage(text), webSearch });
-      thinking.textContent = sanitizePublicAnswer(data.answer);
+      const data = await requestAnswer({ message: text, history, language: messageLanguage, webSearch });
       if (data.ticketIntent) {
-        ticketFlow = { stage: 'email', language: detectLanguage(text) };
+        thinking.remove();
+        ticketFlow = { stage: 'email', language: messageLanguage };
         addMessage(ticketText(ticketFlow.language, 'email'), 'assistant');
         const ticket = document.createElement('button');
-        ticket.type = 'button'; ticket.className = 'consumer-ai-ticket'; ticket.textContent = language() === 'tr' ? 'Destek formunu aç' : language() === 'ar' ? 'فتح نموذج الدعم' : language() === 'zh' ? '打开支持表单' : 'Open support form';
-        ticket.addEventListener('click', () => document.querySelector('[data-form-type="support"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+        ticket.type = 'button'; ticket.className = 'consumer-ai-ticket'; ticket.textContent = messageLanguage === 'tr' ? 'Destek formunu aç' : messageLanguage === 'ar' ? 'فتح نموذج الدعم' : messageLanguage === 'zh' ? '打开支持表单' : 'Open support form';
+        ticket.addEventListener('click', openSupportForm);
         messages.appendChild(ticket);
+        messages.scrollTop = messages.scrollHeight;
+      } else {
+        thinking.textContent = sanitizePublicAnswer(data.answer);
       }
       history = [...history, { role: 'user', content: text }, { role: 'assistant', content: data.answer }].slice(-12);
     } catch (error) { thinking.textContent = t.error; console.error(error); }

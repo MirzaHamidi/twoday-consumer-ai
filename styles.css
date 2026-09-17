@@ -184,7 +184,8 @@ body::before {
 .consumer-ai-message { max-width: 88%; margin: 0; padding: .65rem .8rem; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .92rem; line-height: 1.45; }
 .consumer-ai-message.is-assistant { align-self: flex-start; background: var(--surface-strong); color: var(--text); }
 .consumer-ai-message.is-user { align-self: flex-end; background: var(--brand-red); color: #fff; }
-.consumer-ai-ticket { align-self: flex-start; border: 1px solid var(--mint); border-radius: 10px; padding: .55rem .75rem; background: transparent; color: var(--mint); cursor: pointer; font: inherit; }
+.consumer-ai-ticket { align-self: flex-start; width: min(100%, 18rem); min-height: 2.75rem; border: 1px solid var(--mint); border-radius: 10px; padding: .65rem .8rem; background: color-mix(in srgb, var(--mint) 12%, transparent); color: var(--mint); cursor: pointer; font: inherit; font-weight: 700; text-align: center; }
+.consumer-ai-ticket:hover, .consumer-ai-ticket:focus-visible { background: var(--mint); color: var(--bg); }
 .consumer-ai-form { padding: .8rem; border-top: 1px solid var(--line); }
 .consumer-ai-form textarea { width: 100%; resize: vertical; min-height: 3.2rem; padding: .7rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; }
 .consumer-ai-actions { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .6rem; }
