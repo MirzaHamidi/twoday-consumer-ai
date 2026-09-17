@@ -34,7 +34,7 @@
     const value = String(text || '');
     if (/[؀-ۿ]/u.test(value)) return 'ar';
     if (/[぀-ヿ㐀-鿿]/u.test(value)) return 'zh';
-    if (/[çğıİöşüÇĞIÖŞÜ]/u.test(value) || /\b(merhaba|selam|sorun|rapor|şikayet|sikayet|destek|yardım|yardim|oyun|nasıl|nasil|nerede|neden|istiyorum|çalışmıyor|calismiyor)\b/i.test(value)) return 'tr';
+    if (/[çğıİöşüÇĞÖŞÜ]/u.test(value) || /\b(merhaba|selam|sorun|rapor|şikayet|sikayet|destek|yardım|yardim|oyun|nasıl|nasil|nerede|neden|istiyorum|çalışmıyor|calismiyor)\b/i.test(value)) return 'tr';
     if (/\b(hello|hi|hey|what|why|where|how|can|could|please|report|issue|problem|bug|help|website|game|understand|want|need|the|and|is|are|do|does|i|you)\b/i.test(value)) return 'en';
     return language();
   }

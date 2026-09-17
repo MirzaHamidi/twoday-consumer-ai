@@ -200,7 +200,7 @@ function readJson(request) { return new Promise((resolveBody, reject) => { let r
 function detectLanguage(message, requested) {
   if (/[؀-ۿ]/u.test(message)) return 'ar';
   if (/[぀-ヿ㐀-鿿]/u.test(message)) return 'zh';
-  if (/[çğıİöşüÇĞIÖŞÜ]/u.test(message) || /\b(merhaba|selam|sorun|rapor|şikayet|sikayet|destek|yardım|yardim|oyun|nasıl|nasil|nerede|neden|istiyorum|çalışmıyor|calismiyor)\b/i.test(message)) return 'tr';
+  if (/[çğıİöşüÇĞÖŞÜ]/u.test(message) || /\b(merhaba|selam|sorun|rapor|şikayet|sikayet|destek|yardım|yardim|oyun|nasıl|nasil|nerede|neden|istiyorum|çalışmıyor|calismiyor)\b/i.test(message)) return 'tr';
   if (/\b(hello|hi|hey|what|why|where|how|can|could|please|report|issue|problem|bug|help|website|game|understand|want|need|the|and|is|are|do|does|i|you)\b/i.test(message)) return 'en';
   return ['en', 'tr', 'ar', 'zh'].includes(requested) ? requested : 'en';
 }
